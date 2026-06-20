@@ -37,7 +37,7 @@ export default function Home() {
             )}
           </>
         ) : (
-          categories.map((category) => {
+          categories.map((category, index) => {
             const categoryClubs = clubs.filter((club) => club.category === category);
             return (
               <CategorySection
@@ -45,6 +45,7 @@ export default function Home() {
                 category={category}
                 clubs={categoryClubs}
                 onClubClick={goToClub}
+                rowIndex={index}
               />
             );
           })
