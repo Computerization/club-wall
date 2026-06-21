@@ -59,7 +59,16 @@ export default function ClubDetail() {
         <div className="max-w-3xl mx-auto">
           <BackButton onClick={goHome} />
           {club ? (
-            <PosterImage src={club.poster} alt={`${club.name} 海报`} />
+            <>
+              <PosterImage src={club.poster} alt={`${club.name} 海报`} />
+              {/* 简介专区 */}
+              <div className="mt-8">
+                <h3 className="text-lg font-bold text-[#1A5F4A] mb-4">简介</h3>
+                <div className="w-full min-h-[200px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400">
+                  简介区域
+                </div>
+              </div>
+            </>
           ) : (
             <NotFound onGoHome={goHome} />
           )}

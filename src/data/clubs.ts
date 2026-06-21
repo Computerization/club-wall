@@ -1,4 +1,4 @@
-export type Category = 'Sports' | 'Arts' | 'Service' | 'Life' | 'Academic';
+export type Category = 'Sports' | 'Arts' | 'Service' | 'Life' | 'Academic' | 'ClubsToBeEstablished';
 
 export interface Club {
   id: string;
@@ -117,4 +117,7 @@ export const clubs: Club[] = [
   { id: '92', name: '语言文学社', category: 'Academic', shortDesc: 'Literature', description: '', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop', poster: '', contact: '' },
   { id: '93', name: '生物社', category: 'Academic', shortDesc: 'Biology', description: '', image: 'https://images.unsplash.com/photo-1509266272358-7701da638078?w=400&h=300&fit=crop', poster: '', contact: '' },
   { id: '94', name: '历史社', category: 'Academic', shortDesc: 'History', description: '', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop', poster: '', contact: '' },
+
+  // Clubs to be established
+  { id: '95', name: '阈限空间 Negative Space design', category: 'ClubsToBeEstablished', shortDesc: 'Design', description: '', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop', poster: '', contact: '' },
 ];
