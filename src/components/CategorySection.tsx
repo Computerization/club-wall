@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Club, Category } from '../data/clubs';
+import type { Club } from '../data/clubs';
 import { ListCardImage } from './ImageComponents';
 
 // ============== 常量配置 ==============
@@ -13,13 +13,14 @@ const AUTO_SCROLL_PIXELS_PER_FRAME = 1.2;
 const RESUME_DELAY_MS = 5000;
 
 interface CategorySectionProps {
-  category: Category;
+  category: string;
   clubs: Club[];
   onClubClick: (id: string) => void;
-  rowIndex: number;
+  rowIndex?: number;
+  disableAutoScroll?: boolean;
 }
 
-export default function CategorySection({ category, clubs, onClubClick, rowIndex }: CategorySectionProps) {
+export default function CategorySection({ category, clubs, onClubClick, rowIndex = 0, disableAutoScroll = false }: CategorySectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
@@ -43,9 +44,16 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     isMobile.current = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
   }, []);
 
-  // 初始化滚动位置 + 自动滚动动画
+  // 禁用自动滚动时，直接让 autoScrollEnabled 为 false
   useEffect(() => {
-    if (clubs.length === 0) return;
+    if (disableAutoScroll) {
+      autoScrollEnabled.current = false;
+    }
+  }, [disableAutoScroll]);
+
+  // 初始化滚动位置 + 自动滚动动画（仅当未禁用时）
+  useEffect(() => {
+    if (clubs.length === 0 || disableAutoScroll) return;
 
     if (containerRef.current) {
       containerRef.current.scrollLeft = middleStart;
@@ -58,7 +66,6 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
         let newPos = el.scrollLeft + direction * AUTO_SCROLL_PIXELS_PER_FRAME;
         const maxScroll = el.scrollWidth - el.clientWidth;
 
-        // 无限滚动边界处理
         if (direction > 0 && newPos >= middleEnd) {
           newPos -= setWidth;
         } else if (direction < 0 && newPos < middleStart) {
@@ -73,7 +80,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
-  }, [direction, clubs.length, middleStart, setWidth, middleEnd]);
+  }, [direction, clubs.length, middleStart, setWidth, middleEnd, disableAutoScroll]);
 
   // 用户滚动时的边界吸附
   const handleScroll = useCallback(() => {
@@ -177,10 +184,11 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     containerRef.current.scrollBy({ left: amount });
   }, []);
 
-  const tripledClubs = useMemo(() => {
+  const displayClubs = useMemo(() => {
     if (clubs.length === 0) return [];
+    if (disableAutoScroll) return clubs;
     return Array(SET_COUNT).fill(clubs).flat();
-  }, [clubs]);
+  }, [clubs, disableAutoScroll]);
 
   if (clubs.length === 0) return null;
 
@@ -221,7 +229,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onTouchCancel={handleTouchCancel}
         >
           <div className="flex gap-4 w-max">
-            {tripledClubs.map((club, index) => (
+            {displayClubs.map((club, index) => (
               <ListCard
                 key={`${club.id}-${index}`}
                 club={club}
