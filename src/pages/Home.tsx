@@ -76,6 +76,19 @@ export default function Home() {
             );
           })
         )}
+        {/* 待成立社团 - 不自动滚动 */}
+        {(() => {
+          const pendingClubs = clubs.filter((club) => club.category === 'ClubsToBeEstablished');
+          if (pendingClubs.length === 0) return null;
+          return (
+            <CategorySection
+              category="Clubs to be established"
+              clubs={pendingClubs}
+              onClubClick={goToClub}
+              disableAutoScroll
+            />
+          );
+        })()}
       </main>
       <Footer />
     </div>
