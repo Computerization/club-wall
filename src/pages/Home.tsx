@@ -26,6 +26,13 @@ export default function Home() {
 
   const isSearching = searchQuery.length > 0;
 
+  // Show category rows largest-first, by how many clubs each holds.
+  const orderedCategories = [...categories].sort(
+    (a, b) =>
+      clubs.filter((club) => club.category === b).length -
+      clubs.filter((club) => club.category === a).length
+  );
+
   // Rendered as its own row below the auto-scrolling categories; `categories`
   // intentionally excludes this group so it only appears here, statically.
   const pendingClubs = clubs.filter((club) => club.category === 'ClubsToBeEstablished');
@@ -86,7 +93,7 @@ export default function Home() {
           <>
             <Hero clubCount={clubs.length} categoryCount={categories.length} />
 
-            {categories.map((category, index) => {
+            {orderedCategories.map((category, index) => {
               const categoryClubs = clubs.filter((club) => club.category === category);
               return (
                 <CategorySection

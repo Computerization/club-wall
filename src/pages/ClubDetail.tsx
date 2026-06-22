@@ -83,25 +83,6 @@ export default function ClubDetail() {
             <div className="animate-fade-up">
               <ClubHeader club={club} />
 
-              {/* The club's own recruitment poster, shown full so it's readable. */}
-              {club.posters.length > 0 && (
-                <section className="mt-10">
-                  <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: meta?.accent }}>
-                    招新海报 · Poster
-                  </h3>
-                  <div className="flex flex-col items-center gap-6">
-                    {club.posters.map((poster, i) => (
-                      <img
-                        key={poster}
-                        src={poster}
-                        alt={`${club.name} 海报 ${i + 1}`}
-                        className="w-full max-w-2xl rounded-2xl shadow-lift ring-1 ring-white/10"
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
-
               {/* Intro */}
               <div className="mt-10 grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2">
@@ -124,9 +105,28 @@ export default function ClubDetail() {
                       ))}
                     </div>
                   )}
+
+                  {/* The club's own recruitment poster, shown full so it's readable. */}
+                  {club.posters.length > 0 && (
+                    <div className="mt-8">
+                      <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: meta?.accent }}>
+                        招新海报 · Poster
+                      </h3>
+                      <div className="flex flex-col gap-6">
+                        {club.posters.map((poster, i) => (
+                          <img
+                            key={poster}
+                            src={poster}
+                            alt={`${club.name} 海报 ${i + 1}`}
+                            className="w-full rounded-2xl shadow-lift ring-1 ring-white/10"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <aside className="glass rounded-2xl p-5">
+                <aside className="glass self-start rounded-2xl p-5">
                   <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
                     信息 · Info
                   </h3>
