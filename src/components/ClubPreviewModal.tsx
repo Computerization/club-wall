@@ -1,0 +1,122 @@
+import { useEffect } from 'react';
+import { X, ArrowRight, Sparkles } from 'lucide-react';
+import type { Club } from '../data/clubs';
+import { getCategoryMeta } from '../data/categoryMeta';
+
+interface ClubPreviewModalProps {
+  club: Club | null;
+  onClose: () => void;
+  onOpenFull: (id: string) => void;
+}
+
+/**
+ * A cinematic, full-screen lightbox that previews a club without leaving the
+ * wall. Large imagery on one side, editorial details on the other, themed by
+ * the club's category accent. Closes on backdrop click or Escape.
+ */
+export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPreviewModalProps) {
+  // Lock body scroll + wire up Escape while open.
+  useEffect(() => {
+    if (!club) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [club, onClose]);
+
+  if (!club) return null;
+
+  const meta = getCategoryMeta(club.category);
+  const src = club.poster || club.image;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${club.name} preview`}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+
+      {/* Panel */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="glass-strong relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-lift animate-scale-in md:flex-row md:max-h-[82vh]"
+        style={{ ['--accent' as string]: meta.accent }}
+      >
+        {/* Visual side */}
+        <div className="relative h-56 w-full overflow-hidden md:h-auto md:w-[46%]">
+          {src ? (
+            <img src={src} alt={club.name} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-white/40">
+              {club.name}
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:bg-gradient-to-r" />
+        </div>
+
+        {/* Detail side */}
+        <div className="flex flex-1 flex-col p-6 sm:p-8">
+          <div
+            className="mb-4 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider"
+            style={{ color: meta.accent, border: `1px solid ${meta.accent}`, background: 'rgba(255,255,255,0.03)' }}
+          >
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: meta.accent }} />
+            {meta.en} · {meta.cn}
+          </div>
+
+          <h2 className="font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
+            {club.name}
+          </h2>
+          <p className="mt-2 text-sm font-medium uppercase tracking-[0.18em]" style={{ color: meta.accent }}>
+            {club.shortDesc}
+          </p>
+
+          <p className="mt-5 text-sm leading-relaxed text-white/70">
+            {club.description?.trim()
+              ? club.description
+              : `${club.name} 是世外 ${meta.cn} 类社团之一。${meta.tagline} 在迎新季加入我们，与志同道合的伙伴一起探索、成长。`}
+          </p>
+
+          {club.contact?.trim() && (
+            <p className="mt-4 text-sm text-white/60">
+              <span className="font-semibold text-white/80">联系方式 · Contact：</span> {club.contact}
+            </p>
+          )}
+
+          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+            <button
+              onClick={() => onOpenFull(club.id)}
+              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.03]"
+              style={{ background: meta.accent }}
+            >
+              查看完整详情
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <span className="inline-flex items-center gap-1.5 text-xs text-white/40">
+              <Sparkles className="h-3.5 w-3.5" /> 按 Esc 关闭
+            </span>
+          </div>
+        </div>
+
+        {/* Close */}
+        <button
+          onClick={onClose}
+          aria-label="Close preview"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+        >
+          <X className="h-4.5 w-4.5" />
+        </button>
+      </div>
+    </div>
+  );
+}

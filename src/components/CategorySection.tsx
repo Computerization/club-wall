@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Club } from '../data/clubs';
-import { ListCardImage } from './ImageComponents';
+import type { Club, Category } from '../data/clubs';
+import { getCategoryMeta } from '../data/categoryMeta';
+import GalleryCard from './GalleryCard';
 
 // ============== 常量配置 ==============
-const CARD_WIDTH = 192;
-const CARD_GAP = 16;
+const CARD_WIDTH = 260;
+const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
 const MOVE_THRESHOLD = 5;
 const SET_COUNT = 3;
-const AUTO_SCROLL_PIXELS_PER_FRAME = 1.2;
+const AUTO_SCROLL_PIXELS_PER_FRAME = 0.55;
 const RESUME_DELAY_MS = 5000;
 
 interface CategorySectionProps {
@@ -31,6 +32,8 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
   const touchMoved = useRef(false);
+
+  const meta = getCategoryMeta(category);
 
   // 方向：偶数行从右向左(-1)，奇数行从左向右(1)
   const direction = useMemo(() => rowIndex % 2 === 0 ? -1 : 1, [rowIndex]);
@@ -103,10 +106,10 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   const handleMouseLeave = useCallback(() => {
     setIsDragging(false);
-    if (!isMobile.current) {
+    if (!isMobile.current && !disableAutoScroll) {
       autoScrollEnabled.current = true;
     }
-  }, []);
+  }, [disableAutoScroll]);
 
   // 移动端触摸暂停/恢复
   const clearResumeTimer = useCallback(() => {
@@ -117,11 +120,12 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   }, []);
 
   const startResumeTimer = useCallback(() => {
+    if (disableAutoScroll) return;
     clearResumeTimer();
     resumeTimerRef.current = setTimeout(() => {
       autoScrollEnabled.current = true;
     }, RESUME_DELAY_MS);
-  }, [clearResumeTimer]);
+  }, [clearResumeTimer, disableAutoScroll]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -138,17 +142,18 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   }, []);
 
   const handleTouchEnd = useCallback(() => {
+    if (disableAutoScroll) return;
     if (!touchMoved.current) {
       autoScrollEnabled.current = true;
     } else {
       startResumeTimer();
     }
-  }, [startResumeTimer]);
+  }, [startResumeTimer, disableAutoScroll]);
 
   const handleTouchCancel = useCallback(() => {
     clearResumeTimer();
-    autoScrollEnabled.current = true;
-  }, [clearResumeTimer]);
+    if (!disableAutoScroll) autoScrollEnabled.current = true;
+  }, [clearResumeTimer, disableAutoScroll]);
 
   // 拖拽滚动
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -180,8 +185,8 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   const scrollByOne = useCallback((dir: 'left' | 'right') => {
     if (!containerRef.current) return;
-    const amount = dir === 'left' ? (CARD_WIDTH + CARD_GAP) : -(CARD_WIDTH + CARD_GAP);
-    containerRef.current.scrollBy({ left: amount });
+    const amount = dir === 'left' ? -(CARD_WIDTH + CARD_GAP) : (CARD_WIDTH + CARD_GAP);
+    containerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
   }, []);
 
   const displayClubs = useMemo(() => {
@@ -193,29 +198,46 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   if (clubs.length === 0) return null;
 
   return (
-    <section className="py-6 px-6 border-b border-gray-100 last:border-b-0 relative group">
-      <h2 className="text-xl font-bold text-[#1A5F4A] mb-4">{category}</h2>
+    <section id={`cat-${category}`} className="group relative scroll-mt-20 py-10">
+      {/* Section header */}
+      <div className="mx-auto mb-5 flex max-w-7xl items-end justify-between px-6">
+        <div>
+          <span className="eyebrow text-[11px] font-semibold" style={{ color: meta.accent }}>
+            {meta.cn} · {String(clubs.length).padStart(2, '0')}
+          </span>
+          <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
+            {meta.en}
+          </h2>
+          <p className="mt-1 text-sm text-white/45">{meta.tagline}</p>
+        </div>
+        <span
+          className="hidden h-12 w-1 rounded-full sm:block"
+          style={{ background: `linear-gradient(${meta.accent}, transparent)` }}
+        />
+      </div>
+
+      {/* Marquee */}
       <div className="relative">
         <button
           onClick={() => scrollByOne('left')}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10
-                     w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center
-                     opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+          className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
+                     hover:scale-110 group-hover:opacity-100"
           aria-label="向左滑动"
         >
-          <ChevronLeft className="w-5 h-5 text-[#1A5F4A]" />
+          <ChevronLeft className="h-5 w-5" />
         </button>
 
         <div
           ref={containerRef}
-          className="overflow-x-auto scrollbar-hide select-none"
+          className="marquee-mask scrollbar-hide select-none overflow-x-auto px-6"
           style={{
             userSelect: 'none',
             cursor: isDragging ? 'grabbing' : 'grab',
             scrollbarWidth: 'none',
-            touchAction: 'pan-x'
+            touchAction: 'pan-x',
           }}
           onScroll={handleScroll}
           onMouseEnter={handleMouseEnter}
@@ -228,13 +250,15 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchCancel}
         >
-          <div className="flex gap-4 w-max">
+          <div className="flex w-max gap-5 py-2">
             {displayClubs.map((club, index) => (
-              <ListCard
+              <div
                 key={`${club.id}-${index}`}
-                club={club}
-                onClick={handleCardClick}
-              />
+                style={{ width: CARD_WIDTH }}
+                className="h-[340px] shrink-0"
+              >
+                <GalleryCard club={club} onClick={handleCardClick} />
+              </div>
             ))}
           </div>
         </div>
@@ -243,44 +267,17 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onClick={() => scrollByOne('right')}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10
-                     w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center
-                     opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+          className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
+                     hover:scale-110 group-hover:opacity-100"
           aria-label="向右滑动"
         >
-          <ChevronRight className="w-5 h-5 text-[#1A5F4A]" />
+          <ChevronRight className="h-5 w-5" />
         </button>
       </div>
     </section>
   );
 }
 
-// ============== 子组件 ==============
-
-interface ListCardProps {
-  club: Club;
-  onClick: (id: string) => void;
-}
-
-function ListCard({ club, onClick }: ListCardProps) {
-  return (
-    <div
-      onClick={() => onClick(club.id)}
-      className="flex-shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl 
-                 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 
-                 border border-gray-100"
-    >
-      <ListCardImage club={club} />
-      <CardContent club={club} />
-    </div>
-  );
-}
-
-function CardContent({ club }: { club: Club }) {
-  return (
-    <div className="p-3">
-      <h3 className="text-base font-bold text-[#1A5F4A] truncate">{club.name}</h3>
-      <p className="text-gray-500 text-xs truncate">{club.shortDesc}</p>
-    </div>
-  );
-}
+// Re-export the category type for convenience in case consumers need it.
+export type { Category };
