@@ -2,7 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import Footer from '../components/Footer';
 import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
-import { clubImageSrc } from '../data/clubs';
+import { asset, clubImageSrc } from '../data/clubs';
 import type { Club } from '../data/clubs';
 
 function BackButton({ onClick }: { onClick: () => void }) {
@@ -116,7 +116,7 @@ export default function ClubDetail() {
                         {club.posters.map((poster, i) => (
                           <img
                             key={poster}
-                            src={poster}
+                            src={asset(poster)}
                             alt={`${club.name} 海报 ${i + 1}`}
                             className="w-full rounded-2xl shadow-lift ring-1 ring-white/10"
                           />
@@ -156,7 +156,7 @@ export default function ClubDetail() {
                         {club.qrcodes.map((qr, i) => (
                           <img
                             key={qr}
-                            src={qr}
+                            src={asset(qr)}
                             alt={`${club.name} 招新群二维码 ${i + 1}`}
                             className="w-full rounded-lg bg-white p-2"
                           />
