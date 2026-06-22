@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Club, Category } from '../data/clubs';
+import type { Club } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
 import GalleryCard from './GalleryCard';
 
-// ============== 常量配置 ==============
+// ============== Tuning constants ==============
 const CARD_WIDTH = 260;
 const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
@@ -35,26 +35,26 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   const meta = getCategoryMeta(category);
 
-  // 方向：偶数行从右向左(-1)，奇数行从左向右(1)
+  // Direction: even rows scroll right-to-left (-1), odd rows left-to-right (1).
   const direction = useMemo(() => rowIndex % 2 === 0 ? -1 : 1, [rowIndex]);
 
   const setWidth = useMemo(() => clubs.length * CARD_WIDTH + (clubs.length - 1) * CARD_GAP, [clubs]);
   const middleStart = setWidth;
   const middleEnd = 2 * setWidth;
 
-  // 检测移动设备
+  // Detect touch / mobile devices.
   useEffect(() => {
     isMobile.current = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
   }, []);
 
-  // 禁用自动滚动时，直接让 autoScrollEnabled 为 false
+  // When auto-scroll is disabled, keep it permanently off.
   useEffect(() => {
     if (disableAutoScroll) {
       autoScrollEnabled.current = false;
     }
   }, [disableAutoScroll]);
 
-  // 初始化滚动位置 + 自动滚动动画（仅当未禁用时）
+  // Initialize the scroll position + run the auto-scroll animation (unless disabled).
   useEffect(() => {
     if (clubs.length === 0 || disableAutoScroll) return;
 
@@ -85,7 +85,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     return () => cancelAnimationFrame(rafId);
   }, [direction, clubs.length, middleStart, setWidth, middleEnd, disableAutoScroll]);
 
-  // 用户滚动时的边界吸附
+  // Snap back across the seam when the user scrolls past a copy boundary.
   const handleScroll = useCallback(() => {
     if (!containerRef.current || clubs.length === 0 || autoScrollEnabled.current) return;
 
@@ -97,7 +97,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     }
   }, [setWidth, middleStart, middleEnd, clubs.length]);
 
-  // 桌面端悬停暂停
+  // Desktop: pause auto-scroll on hover.
   const handleMouseEnter = useCallback(() => {
     if (!isMobile.current) {
       autoScrollEnabled.current = false;
@@ -111,7 +111,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     }
   }, [disableAutoScroll]);
 
-  // 移动端触摸暂停/恢复
+  // Mobile: pause on touch, then resume after a delay.
   const clearResumeTimer = useCallback(() => {
     if (resumeTimerRef.current) {
       clearTimeout(resumeTimerRef.current);
@@ -155,7 +155,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     if (!disableAutoScroll) autoScrollEnabled.current = true;
   }, [clearResumeTimer, disableAutoScroll]);
 
-  // 拖拽滚动
+  // Click-and-drag scrolling.
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return;
     setIsDragging(true);
@@ -278,6 +278,3 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     </section>
   );
 }
-
-// Re-export the category type for convenience in case consumers need it.
-export type { Category };

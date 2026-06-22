@@ -1,4 +1,4 @@
-import type { Category } from './clubs';
+import type { Category, Club } from './clubs';
 
 export interface CategoryMeta {
   /** English display label */
@@ -63,4 +63,15 @@ const FALLBACK: CategoryMeta = {
 
 export function getCategoryMeta(category: string): CategoryMeta {
   return categoryMeta[category as Category] ?? FALLBACK;
+}
+
+/**
+ * The club's own description, or a generated editorial blurb when it has none.
+ * `suffix` is appended inside the closing sentence so callers can tailor the
+ * fallback's ending without re-stating the shared copy.
+ */
+export function clubBlurb(club: Club, suffix = ''): string {
+  if (club.description?.trim()) return club.description;
+  const meta = getCategoryMeta(club.category);
+  return `${club.name} 是世外 ${meta.cn} 类社团之一。${meta.tagline} 在迎新季加入我们，与志同道合的伙伴一起探索、成长${suffix}。`;
 }

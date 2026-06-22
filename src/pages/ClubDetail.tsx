@@ -1,7 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import Footer from '../components/Footer';
 import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
-import { getCategoryMeta } from '../data/categoryMeta';
+import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
+import { clubImageSrc } from '../data/clubs';
 import type { Club } from '../data/clubs';
 
 function BackButton({ onClick }: { onClick: () => void }) {
@@ -33,7 +34,7 @@ function NotFound({ onGoHome }: { onGoHome: () => void }) {
 
 function ClubHeader({ club }: { club: Club }) {
   const meta = getCategoryMeta(club.category);
-  const src = club.poster || club.image;
+  const src = clubImageSrc(club);
 
   return (
     <div className="relative overflow-hidden rounded-3xl shadow-lift ring-1 ring-white/10">
@@ -89,9 +90,7 @@ export default function ClubDetail() {
                     关于社团 · About
                   </h3>
                   <p className="text-base leading-relaxed text-white/75">
-                    {club.description?.trim()
-                      ? club.description
-                      : `${club.name} 是世外 ${meta?.cn} 类社团之一。${meta?.tagline} 在迎新季加入我们，与志同道合的伙伴一起探索、成长，留下属于你的高中印记。`}
+                    {clubBlurb(club, '，留下属于你的高中印记')}
                   </p>
                 </div>
 

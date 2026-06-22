@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { X, ArrowRight, Sparkles } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { getCategoryMeta } from '../data/categoryMeta';
+import { clubImageSrc } from '../data/clubs';
+import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
 
 interface ClubPreviewModalProps {
   club: Club | null;
@@ -33,7 +34,7 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
   if (!club) return null;
 
   const meta = getCategoryMeta(club.category);
-  const src = club.poster || club.image;
+  const src = clubImageSrc(club);
 
   return (
     <div
@@ -82,9 +83,7 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
           </p>
 
           <p className="mt-5 text-sm leading-relaxed text-white/70">
-            {club.description?.trim()
-              ? club.description
-              : `${club.name} 是世外 ${meta.cn} 类社团之一。${meta.tagline} 在迎新季加入我们，与志同道合的伙伴一起探索、成长。`}
+            {clubBlurb(club)}
           </p>
 
           {club.contact?.trim() && (

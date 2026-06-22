@@ -25,6 +25,10 @@ export default function Home() {
 
   const isSearching = searchQuery.length > 0;
 
+  // Rendered as its own row below the auto-scrolling categories; `categories`
+  // intentionally excludes this group so it only appears here, statically.
+  const pendingClubs = clubs.filter((club) => club.category === 'ClubsToBeEstablished');
+
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setSearchQuery(inputValue);
@@ -94,19 +98,14 @@ export default function Home() {
               );
             })}
 
-            {/* 待成立社团 - 不自动滚动 */}
-            {(() => {
-              const pendingClubs = clubs.filter((club) => club.category === 'ClubsToBeEstablished');
-              if (pendingClubs.length === 0) return null;
-              return (
-                <CategorySection
-                  category="ClubsToBeEstablished"
-                  clubs={pendingClubs}
-                  onClubClick={openPreview}
-                  disableAutoScroll
-                />
-              );
-            })()}
+            {pendingClubs.length > 0 && (
+              <CategorySection
+                category="ClubsToBeEstablished"
+                clubs={pendingClubs}
+                onClubClick={openPreview}
+                disableAutoScroll
+              />
+            )}
           </>
         )}
       </main>

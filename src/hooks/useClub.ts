@@ -1,25 +1,15 @@
-import { clubs, Club, Category } from '../data/clubs';
+import { clubs, Club } from '../data/clubs';
 import { useParams, useNavigate } from 'react-router-dom';
 
 /**
- * 根据分类筛选社团
- */
-export function useFilteredClubs(category: Category | 'All'): Club[] {
-  if (category === 'All') {
-    return clubs;
-  }
-  return clubs.filter((club) => club.category === category);
-}
-
-/**
- * 根据ID获取单个社团
+ * Look up a single club by id.
  */
 export function useClub(id: string | undefined): Club | undefined {
   return clubs.find((club) => club.id === id);
 }
 
 /**
- * 社团导航
+ * Navigation helpers for moving between the wall and club detail pages.
  */
 export function useClubNavigation() {
   const navigate = useNavigate();
@@ -31,7 +21,7 @@ export function useClubNavigation() {
 }
 
 /**
- * 获取URL中的社团ID参数
+ * Read the club id from the current route's URL params.
  */
 export function useClubIdParam(): string | undefined {
   const { id } = useParams<{ id: string }>();

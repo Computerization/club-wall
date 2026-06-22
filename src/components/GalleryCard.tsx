@@ -1,12 +1,11 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Club } from '../data/clubs';
+import { clubImageSrc } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
 
 interface GalleryCardProps {
   club: Club;
   onClick: (id: string) => void;
-  /** Disable interactions while a drag is in progress (marquee rows). */
-  draggable?: boolean;
 }
 
 /**
@@ -17,9 +16,7 @@ interface GalleryCardProps {
  */
 export default function GalleryCard({ club, onClick }: GalleryCardProps) {
   const meta = getCategoryMeta(club.category);
-  // The data has real photos in `image`; `poster` is usually empty — prefer
-  // whichever exists so tiles are never blank.
-  const src = club.poster || club.image;
+  const src = clubImageSrc(club);
 
   return (
     <article

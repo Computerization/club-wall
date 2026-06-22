@@ -121,3 +121,9 @@ export const clubs: Club[] = [
   // Clubs to be established
   { id: '95', name: '阈限空间 Negative Space design', category: 'ClubsToBeEstablished', shortDesc: 'Design', description: '', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop', poster: '', contact: '' },
 ];
+
+// The data has real photos in `image`; `poster` is usually empty — prefer
+// whichever exists so tiles are never blank.
+export function clubImageSrc(club: Club): string {
+  return club.poster || club.image;
+}
