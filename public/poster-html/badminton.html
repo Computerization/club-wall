@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>轻羽飞扬 WFLA Badminton Club · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #EAF6FF; }
+  * { box-sizing: border-box; }
+  :root {
+    --sky: #3BA7E0;
+    --sky-deep: #2176B6;
+    --yellow: #FFD23F;
+    --yellow-deep: #F4B100;
+    --ink: #1c3a4f;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background: linear-gradient(165deg, #EAF6FF 0%, #DCF0FF 45%, #FFF6D8 100%);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(24px, 6.5cqw, 44px) clamp(20px, 6cqw, 38px) clamp(22px, 6cqw, 40px);
+  }
+  /* 阳光光斑 */
+  .sun { position: absolute; z-index: 0; right: -12cqw; top: -12cqw; width: 50cqw; height: 50cqw;
+    background: radial-gradient(circle, rgba(255,210,63,.55), rgba(255,210,63,0) 68%); }
+  /* 羽毛球沿弧线来回飞 */
+  .court { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .birdie { position: absolute; font-size: clamp(20px,5cqw,34px); will-change: transform; }
+  .b1 { top: 30%; left: 0;  animation: fly1 6s ease-in-out infinite; }
+  .b2 { top: 64%; left: 0;  animation: fly2 7.5s ease-in-out infinite; }
+  @keyframes fly1 {
+    0%{transform:translate(2cqw,6cqw) rotate(20deg)} 50%{transform:translate(78cqw,-8cqw) rotate(220deg)} 100%{transform:translate(2cqw,6cqw) rotate(380deg)} }
+  @keyframes fly2 {
+    0%{transform:translate(80cqw,4cqw) rotate(-20deg)} 50%{transform:translate(6cqw,-6cqw) rotate(-200deg)} 100%{transform:translate(80cqw,4cqw) rotate(-380deg)} }
+
+  .inner { position: relative; z-index: 1; }
+  .kicker {
+    display: inline-block; font-size: clamp(10px,2cqw,12.5px); font-weight: 800;
+    letter-spacing: .34em; text-indent: .34em; color: #fff;
+    background: var(--sky); border-radius: 99px; padding: clamp(5px,1.3cqw,8px) clamp(12px,3cqw,18px);
+    opacity:0; animation: rise .8s ease-out .1s forwards;
+  }
+  h1 { margin: clamp(16px,4.5cqw,28px) 0 0; line-height: 1.02; }
+  .title-cn {
+    display:block; font-size: clamp(36px, 11cqw, 72px); font-weight: 900; letter-spacing: .06em;
+    color: var(--sky-deep); text-shadow: 0 4px 0 #fff, 0 8px 18px rgba(33,118,182,.22);
+    opacity:0; animation: rise .8s ease-out .18s forwards;
+  }
+  .title-en {
+    display:block; margin-top: clamp(4px,1.2cqw,8px);
+    font-size: clamp(15px, 4cqw, 26px); font-weight: 800; letter-spacing: .12em;
+    color: var(--yellow-deep);
+    opacity:0; animation: rise .8s ease-out .3s forwards;
+  }
+  .slogan {
+    margin: clamp(16px,4.4cqw,28px) 0 0; font-size: clamp(15px,3.6cqw,22px); font-weight: 800; color: var(--ink);
+    opacity:0; animation: rise .8s ease-out .42s forwards;
+  }
+  .slogan span { color: var(--sky-deep); }
+  .sub { margin: clamp(6px,1.6cqw,10px) 0 0; font-size: clamp(12.5px,2.7cqw,15.5px); color: #436176; font-weight:600;
+    opacity:0; animation: rise .8s ease-out .5s forwards; }
+
+  .tags { margin: clamp(20px,5cqw,32px) 0 0; display:flex; flex-wrap:wrap; gap: clamp(7px,1.8cqw,11px);
+    opacity:0; animation: rise .8s ease-out .58s forwards; }
+  .tag { font-size: clamp(13px,2.8cqw,16px); font-weight: 800; color: #fff;
+    background: linear-gradient(120deg, var(--sky), var(--sky-deep));
+    border-radius: 99px; padding: clamp(6px,1.5cqw,9px) clamp(14px,3.4cqw,20px);
+    box-shadow: 0 6px 14px rgba(33,118,182,.25); }
+  .tag.alt { background: linear-gradient(120deg, var(--yellow), var(--yellow-deep)); color: #5a4200; box-shadow: 0 6px 14px rgba(244,177,0,.3); }
+
+  .foot { margin: clamp(22px,5.5cqw,34px) 0 0; border-top: 2px dashed #BcdCEF; padding-top: clamp(14px,3.6cqw,22px);
+    display:flex; align-items:center; gap: .7em; font-size: clamp(13px,2.8cqw,16px);
+    opacity:0; animation: rise .8s ease-out .66s forwards; }
+  .foot .k { color: var(--sky-deep); font-weight: 800; }
+  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; background:#fff; color: var(--sky-deep);
+    border:2px solid #BcdCEF; border-radius: 8px; padding: 3px 10px; font-weight:700; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .kicker,.title-cn,.title-en,.slogan,.sub,.tags,.foot{opacity:1!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="court" aria-hidden="true">
+      <span class="birdie b1">🏸</span>
+      <span class="birdie b2">🏸</span>
+    </div>
+    <div class="inner">
+      <span class="kicker">WFLA BADMINTON CLUB</span>
+      <h1>
+        <span class="title-cn">轻羽飞扬</span>
+        <span class="title-en">青春 · 阳光 · 羽你同行</span>
+      </h1>
+      <p class="slogan">以羽相会，<span>聚力同行</span></p>
+      <p class="sub">于运动之中，传递每一份暖意。</p>
+
+      <div class="tags">
+        <span class="tag">热忱</span>
+        <span class="tag alt">竞技</span>
+        <span class="tag">向善</span>
+        <span class="tag alt">青春</span>
+      </div>
+
+      <div class="foot">
+        <span class="k">社长微信</span>
+        <span class="mono">yyq-100616</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modi 3D 建模社 · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #14102b; }
+  * { box-sizing: border-box; }
+  :root {
+    --bg: #14102b;
+    --violet: #8b5cf6;
+    --magenta: #ec4899;
+    --cyan: #22d3ee;
+    --ink: #e7e3ff;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background:
+      radial-gradient(90% 60% at 15% 0%, rgba(139,92,246,.45), transparent 60%),
+      radial-gradient(80% 60% at 95% 30%, rgba(236,72,153,.32), transparent 55%),
+      radial-gradient(90% 70% at 50% 110%, rgba(34,211,238,.28), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(26px, 7cqw, 48px) clamp(20px, 6cqw, 38px) clamp(24px, 6cqw, 40px);
+  }
+  /* 网格地面 */
+  .grid { position:absolute; inset:auto 0 0 0; height:40%; z-index:0; pointer-events:none; opacity:.25;
+    background-image: linear-gradient(rgba(34,211,238,.5) 1px,transparent 1px), linear-gradient(90deg, rgba(34,211,238,.5) 1px,transparent 1px);
+    background-size: 8cqw 8cqw; transform: perspective(40cqw) rotateX(60deg); transform-origin: bottom; }
+
+  .inner { position:relative; z-index:1; }
+  .kicker { display:inline-block; font-size: clamp(10px,2cqw,12.5px); font-weight:800; letter-spacing:.32em; text-indent:.32em;
+    color:#fff; background: linear-gradient(90deg,var(--violet),var(--magenta)); border-radius:99px;
+    padding: clamp(5px,1.3cqw,8px) clamp(12px,3cqw,18px); opacity:0; animation: rise .8s ease-out .08s forwards; }
+  h1 { margin: clamp(14px,4cqw,26px) 0 0; line-height:1; }
+  .title { display:block; font-size: clamp(44px, 14cqw, 96px); font-weight:900; letter-spacing:-.02em;
+    background: linear-gradient(100deg, var(--cyan), var(--violet) 45%, var(--magenta));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter: drop-shadow(0 6px 26px rgba(139,92,246,.5));
+    opacity:0; animation: rise .8s ease-out .16s forwards; }
+  .sub { display:block; margin-top: clamp(4px,1.2cqw,8px); font-size: clamp(15px,4cqw,26px); font-weight:800; color:#fff;
+    opacity:0; animation: rise .8s ease-out .26s forwards; }
+  .sub b { color: var(--cyan); }
+  .lead { margin: clamp(12px,3.4cqw,22px) 0 0; font-size: clamp(12.5px,2.6cqw,15px); line-height:1.75; color: #c6bff0; max-width: 94%;
+    opacity:0; animation: rise .8s ease-out .34s forwards; }
+
+  /* 渲染作品 gallery */
+  .gallery { margin: clamp(18px,4.6cqw,30px) 0 0; display:grid; grid-template-columns:1fr 1fr; gap: clamp(8px,2.2cqw,14px);
+    opacity:0; animation: rise .8s ease-out .42s forwards; }
+  .art { border-radius: clamp(10px,2.6cqw,18px); overflow:hidden; aspect-ratio:4/3; position:relative;
+    border:1px solid rgba(255,255,255,.12); box-shadow: 0 16px 34px rgba(0,0,0,.5);
+    animation: floaty 6s ease-in-out infinite; }
+  .art:nth-child(1){ grid-column:1/-1; aspect-ratio:16/8; animation-delay:0s; }
+  .art:nth-child(2){ animation-delay:.7s; } .art:nth-child(3){ animation-delay:1.4s; }
+  .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1.4cqw)} }
+
+  /* 卖点 */
+  .perks { margin: clamp(18px,4.6cqw,30px) 0 0; display:flex; flex-wrap:wrap; gap: clamp(8px,2cqw,12px);
+    opacity:0; animation: rise .8s ease-out .5s forwards; }
+  .perk { font-size: clamp(12.5px,2.6cqw,15px); font-weight:700; color:#fff;
+    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+    border-radius: 99px; padding: clamp(7px,1.8cqw,11px) clamp(13px,3.2cqw,19px); }
+  .perk b { color: var(--cyan); }
+
+  .foot { margin: clamp(20px,5cqw,32px) 0 0; font-size: clamp(12.5px,2.6cqw,15px); color:#c6bff0;
+    opacity:0; animation: rise .8s ease-out .58s forwards; }
+  .foot b { color:#fff; }
+  .foot .tool { color: var(--magenta); font-weight:800; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .kicker,h1,.title,.sub,.lead,.gallery,.perks,.foot{opacity:1!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <div class="grid" aria-hidden="true"></div>
+    <div class="inner">
+      <span class="kicker">MODI · 3D MODELING CLUB</span>
+      <h1>
+        <span class="title">Modi</span>
+        <span class="sub">从建模 → 渲染 → <b>动画</b></span>
+      </h1>
+      <p class="lead">计算机技术与艺术相融的创新社团 —— 用 <b style="color:#fff">Blender</b> 把脑海里的 3D 世界做出来，玩转动画视频、游戏道具与产品模型。</p>
+
+      <div class="gallery">
+        <figure class="art"><img src="modi-3d/assets/items.jpg" alt="3D 游戏道具渲染" loading="lazy"></figure>
+        <figure class="art"><img src="modi-3d/assets/hail-mary.jpg" alt="Hail Mary 场景渲染" loading="lazy"></figure>
+        <figure class="art"><img src="modi-3d/assets/cabin.jpg" alt="低多边形小屋渲染" loading="lazy"></figure>
+      </div>
+
+      <div class="perks">
+        <span class="perk">零门槛 · <b>一步步手把手教</b></span>
+        <span class="perk">很 <b>i 人友好</b></span>
+        <span class="perk">学会一门<b>独特技术</b></span>
+        <span class="perk">认真做 <b>CAS 时间很富裕</b></span>
+      </div>
+
+      <p class="foot">名字看着技术，其实掌握基础就能运用自如，还有<b>课后服务</b>。&nbsp;社长 <b>来沐憧</b> · 主用工具 <span class="tool">Blender</span></p>
+    </div>
+  </div>
+</body>
+</html>

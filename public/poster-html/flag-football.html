@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>腰旗橄榄球社 · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #F2F8FD; }
+  * { box-sizing: border-box; }
+  :root {
+    --blue: #AED4F0;
+    --blue-deep: #3E86C4;
+    --orange: #FF8A3D;
+    --orange-deep: #F06A12;
+    --ink: #21384a;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background: linear-gradient(170deg, #FFFFFF 0%, #EAF4FC 60%, #DDEEFB 100%);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(24px, 6.5cqw, 44px) clamp(20px, 6cqw, 38px) clamp(22px, 6cqw, 40px);
+  }
+  /* 球场底纹 + 码线 */
+  .field { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity:.5; }
+  .field i { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--blue); }
+  /* 悬浮方块 */
+  .blocks { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .blk { position: absolute; border-radius: 22%; opacity:.5; }
+  .blk1{ left:6%; top:24%; width:8cqw; height:8cqw; background: var(--blue); animation: bob 5s ease-in-out infinite; }
+  .blk2{ right:9%; top:14%; width:5cqw; height:5cqw; background: var(--orange); animation: bob 6.5s ease-in-out infinite reverse; }
+  .blk3{ right:16%; bottom:26%; width:7cqw; height:7cqw; background: var(--blue-deep); opacity:.3; animation: bob 7s ease-in-out infinite; }
+  .blk4{ left:12%; bottom:18%; width:4.5cqw; height:4.5cqw; background: var(--orange); animation: bob 5.8s ease-in-out infinite reverse; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-2.4cqw) rotate(12deg)} }
+
+  /* 奔跑的人物剪影横穿 */
+  .runner { position: absolute; bottom: clamp(60px,16cqw,120px); left: 0; z-index: 0; width: clamp(40px,11cqw,80px);
+    color: var(--blue-deep); opacity:.28; animation: run 9s linear infinite; }
+  @keyframes run { 0%{transform:translateX(-20cqw) scaleX(1)} 100%{transform:translateX(115cqw) scaleX(1)} }
+
+  .inner { position: relative; z-index: 1; }
+  .kicker { display:inline-flex; align-items:center; gap:.5em; font-size: clamp(10px,2cqw,12.5px); font-weight: 800;
+    letter-spacing: .26em; text-indent:.26em; color:#fff; background: var(--orange); border-radius:99px;
+    padding: clamp(5px,1.3cqw,8px) clamp(12px,3cqw,18px); opacity:0; animation: rise .8s ease-out .1s forwards; }
+  /* 旋转的橄榄球 */
+  .ball { display:inline-block; width: clamp(26px,6cqw,40px); height: clamp(16px,3.7cqw,25px);
+    background: linear-gradient(90deg,var(--orange),var(--orange-deep)); border-radius: 50%;
+    position: relative; transform: rotate(-20deg); animation: spin 3.2s linear infinite; vertical-align: middle; }
+  .ball::before, .ball::after { content:""; position:absolute; background:#fff; }
+  .ball::before { left:18%; right:18%; top:48%; height:9%; }
+  .ball::after { left:46%; top:30%; bottom:30%; width:8%; box-shadow: -1.6cqw 0 #fff, 1.6cqw 0 #fff; }
+  @keyframes spin { to { transform: rotate(340deg); } }
+
+  h1 { margin: clamp(16px,4.5cqw,28px) 0 0; line-height:1.04; }
+  .title-cn { display:block; font-size: clamp(34px,10.5cqw,68px); font-weight:900; letter-spacing:.04em;
+    color: var(--blue-deep); text-shadow: 0 4px 0 #fff, 0 9px 18px rgba(62,134,196,.2);
+    opacity:0; animation: rise .8s ease-out .18s forwards; }
+  .title-en { display:block; margin-top: clamp(3px,1cqw,7px); font-size: clamp(14px,3.6cqw,23px); font-weight:800;
+    letter-spacing:.14em; color: var(--orange-deep); opacity:0; animation: rise .8s ease-out .3s forwards; }
+  .intro { margin: clamp(16px,4.2cqw,26px) 0 0; font-size: clamp(13px,2.8cqw,16px); line-height:1.75; color:#3a5469;
+    max-width: 94%; opacity:0; animation: rise .8s ease-out .42s forwards; }
+
+  .tags { margin: clamp(18px,4.6cqw,30px) 0 0; display:flex; flex-wrap:wrap; gap: clamp(7px,1.8cqw,11px);
+    opacity:0; animation: rise .8s ease-out .52s forwards; }
+  .tag { font-size: clamp(13px,2.8cqw,16px); font-weight:800; color: var(--blue-deep); background:#fff;
+    border: 2px solid var(--blue); border-radius:99px; padding: clamp(6px,1.5cqw,9px) clamp(14px,3.4cqw,20px); }
+  .tag.hot { color:#fff; background: linear-gradient(120deg,var(--orange),var(--orange-deep)); border-color: transparent; }
+
+  .foot { margin: clamp(22px,5.5cqw,34px) 0 0; border-top:2px dashed #C9E2F5; padding-top: clamp(14px,3.6cqw,22px);
+    display:flex; align-items:center; gap:.7em; font-size: clamp(13px,2.8cqw,16px);
+    opacity:0; animation: rise .8s ease-out .6s forwards; }
+  .foot .k { color: var(--orange-deep); font-weight:800; }
+  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; background:#fff; color: var(--blue-deep);
+    border:2px solid var(--blue); border-radius:8px; padding:3px 10px; font-weight:700; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .kicker,.title-cn,.title-en,.intro,.tags,.foot{opacity:1!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <div class="field" aria-hidden="true">
+      <i style="left:18%"></i><i style="left:38%"></i><i style="left:58%"></i><i style="left:78%"></i>
+    </div>
+    <div class="blocks" aria-hidden="true">
+      <span class="blk blk1"></span><span class="blk blk2"></span><span class="blk blk3"></span><span class="blk blk4"></span>
+    </div>
+    <svg class="runner" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <circle cx="40" cy="10" r="6"/>
+      <path d="M36 18 q8 2 10 10 l-4 3 q-4 -6 -9 -5 l-12 8 6 9 -4 12 -6 -2 4 -12 -10 -10 q-2 -6 4 -9 z"/>
+    </svg>
+
+    <div class="inner">
+      <span class="kicker"><span class="ball"></span> FLAG FOOTBALL · WFLA</span>
+      <h1>
+        <span class="title-cn">腰旗橄榄球社</span>
+        <span class="title-en">轻松 · 阳光 · 活力满场</span>
+      </h1>
+      <p class="intro">在日常训练里打磨基本功与战术理解 —— 没有激烈冲撞，只有奔跑、传球与默契。无论零基础还是老玩家，来这片场地一起跑起来！</p>
+
+      <div class="tags">
+        <span class="tag hot">对抗游戏</span>
+        <span class="tag">基础训练</span>
+        <span class="tag hot">活力向上</span>
+        <span class="tag">快乐有趣</span>
+      </div>
+
+      <div class="foot">
+        <span class="k">社长微信</span>
+        <span class="mono">haoyunz0707</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

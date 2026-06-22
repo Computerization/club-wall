@@ -102,6 +102,9 @@ export default function Home() {
                   clubs={categoryClubs}
                   onClubClick={openPreview}
                   rowIndex={index}
+                  // Too few cards to fill the row — show them static & centered
+                  // instead of an awkward auto-scrolling marquee.
+                  disableAutoScroll={categoryClubs.length <= 6}
                 />
               );
             })}

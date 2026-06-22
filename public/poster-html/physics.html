@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>物理社 Physics Society · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #0B1E3F; }
+  * { box-sizing: border-box; }
+  :root {
+    --navy: #0B1E3F;
+    --navy2: #0e2a57;
+    --cyan: #35C5E8;
+    --cyan-soft: #7fe0f5;
+    --silver: #cdd6e6;
+    --ink: #dbe6f5;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background: radial-gradient(120% 80% at 80% -5%, #163562 0%, var(--navy) 55%);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(22px, 6cqw, 40px) clamp(20px, 5.5cqw, 36px) clamp(22px, 6cqw, 40px);
+  }
+  /* 粒子轨迹 / 公式漂浮背景 */
+  .bg { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .formula { position:absolute; font-family: "Times New Roman", serif; font-style:italic;
+    color: var(--cyan); opacity:.12; font-weight:600; white-space:nowrap; }
+  .f1{ top:18%; left:-2%; font-size:6cqw; animation: floaty 9s ease-in-out infinite; }
+  .f2{ top:46%; right:2%; font-size:5cqw; animation: floaty 11s ease-in-out infinite reverse; }
+  .f3{ bottom:10%; left:4%; font-size:5.5cqw; animation: floaty 13s ease-in-out infinite; }
+  .dot { position:absolute; width:1.4cqw; height:1.4cqw; border-radius:50%; background: var(--cyan-soft);
+    box-shadow: 0 0 2cqw var(--cyan); opacity:.6; }
+  .d1{ top:24%; left:30%; animation: floaty 7s ease-in-out infinite; }
+  .d2{ top:60%; left:70%; animation: floaty 8.5s ease-in-out infinite reverse; }
+  .d3{ top:80%; left:20%; animation: floaty 10s ease-in-out infinite; }
+  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3cqw)} }
+
+  .inner { position:relative; z-index:1; }
+
+  /* 标题区 + 牛顿摆 */
+  .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap: 4cqw; }
+  .kicker { font-size: clamp(10px,2cqw,12.5px); font-weight:800; letter-spacing:.36em; text-indent:.36em;
+    color: var(--cyan); opacity:0; animation: rise .8s ease-out .05s forwards; }
+  h1 { margin: clamp(8px,2.2cqw,14px) 0 0; font-size: clamp(22px, 6.4cqw, 42px); font-weight:900; line-height:1.12;
+    color:#fff; opacity:0; animation: rise .8s ease-out .15s forwards;
+    text-shadow: 0 0 18px rgba(53,197,232,.35); }
+  h1 b { color: var(--cyan); }
+  /* 牛顿摆 */
+  .cradle { flex:none; width: clamp(70px,18cqw,120px); height: clamp(52px,13cqw,88px); position:relative; margin-top:1cqw; }
+  .cradle .bar { position:absolute; top:0; left:8%; right:8%; height:6%; background: var(--silver); border-radius:3px; }
+  .cradle .ball { position:absolute; top:6%; width:14%; transform-origin: top center; }
+  .cradle .ball .str { width:6%; height:62cqw; max-height:64px; margin:0 auto; background: var(--silver); height: 70%; }
+  .cradle .ball .bo { width:100%; aspect-ratio:1; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--cyan) 60%, #137 100%);
+    box-shadow:0 0 8px rgba(53,197,232,.7); }
+  .cradle .b0{ left:16%; animation: swingL 1.6s ease-in-out infinite; }
+  .cradle .b1{ left:30%; } .cradle .b2{ left:44%; } .cradle .b3{ left:58%; }
+  .cradle .b4{ left:72%; animation: swingR 1.6s ease-in-out infinite; }
+  @keyframes swingL { 0%,50%,100%{transform:rotate(0)} 25%{transform:rotate(-26deg)} }
+  @keyframes swingR { 0%,50%,100%{transform:rotate(0)} 75%{transform:rotate(26deg)} }
+
+  .intro { margin: clamp(14px,3.8cqw,24px) 0 0; font-size: clamp(12.5px,2.6cqw,15px); line-height:1.8; color: var(--silver);
+    opacity:0; animation: rise .8s ease-out .28s forwards; }
+
+  .section-t { margin: clamp(18px,4.6cqw,28px) 0 clamp(8px,2cqw,12px); font-size: clamp(11px,2.2cqw,13px);
+    font-weight:800; letter-spacing:.2em; color: var(--cyan); }
+
+  /* 活动照 gallery */
+  .gallery { display:grid; grid-template-columns:1fr 1fr; gap: clamp(7px,1.8cqw,12px);
+    opacity:0; animation: rise .8s ease-out .36s forwards; }
+  .shot { position:relative; border-radius: clamp(8px,2cqw,14px); overflow:hidden; aspect-ratio:4/3;
+    background:#13294d; border:1px solid rgba(53,197,232,.25); box-shadow:0 0 16px rgba(0,0,0,.4); }
+  .shot.wide { grid-column:1/-1; aspect-ratio:16/7; }
+  .shot img { width:100%; height:100%; object-fit:cover; display:block; }
+  .shot figcaption { position:absolute; left:0; right:0; bottom:0; font-size: clamp(9.5px,2cqw,12px); font-weight:700;
+    color:#fff; padding: clamp(8px,2.4cqw,14px) clamp(7px,2cqw,11px) clamp(4px,1.2cqw,7px);
+    background: linear-gradient(transparent, rgba(7,18,38,.9)); }
+
+  /* 亮点分区 */
+  .perks { display:grid; gap: clamp(7px,1.8cqw,11px);
+    opacity:0; animation: rise .8s ease-out .44s forwards; }
+  .perk { background: rgba(255,255,255,.04); border:1px solid rgba(53,197,232,.18);
+    border-radius: clamp(8px,2cqw,14px); padding: clamp(9px,2.4cqw,15px) clamp(11px,3cqw,18px);
+    font-size: clamp(12px,2.5cqw,14.5px); line-height:1.5; }
+  .perk .h { color: var(--cyan); font-weight:800; }
+  .perk .h::before { content:"▹ "; }
+
+  .fit { margin: clamp(16px,4cqw,26px) 0 0; text-align:center; font-size: clamp(13px,2.9cqw,17px); font-weight:800; color:#fff;
+    background: linear-gradient(100deg, rgba(53,197,232,.18), rgba(53,197,232,.04));
+    border:1px solid rgba(53,197,232,.4); border-radius:99px; padding: clamp(9px,2.4cqw,14px);
+    box-shadow: 0 0 22px rgba(53,197,232,.2);
+    opacity:0; animation: rise .8s ease-out .52s forwards; }
+  .fit b { color: var(--cyan); }
+  .cta { margin: clamp(10px,2.6cqw,16px) 0 0; text-align:center; font-size: clamp(13px,2.8cqw,16px); font-weight:800;
+    color: var(--cyan-soft); opacity:0; animation: rise .8s ease-out .58s forwards; }
+
+  /* 联系 */
+  .foot { margin: clamp(16px,4cqw,24px) 0 0; border-top:1px solid rgba(255,255,255,.12); padding-top: clamp(13px,3.4cqw,20px);
+    display:grid; gap: clamp(6px,1.6cqw,10px); font-size: clamp(11.5px,2.4cqw,14px);
+    opacity:0; animation: rise .8s ease-out .64s forwards; }
+  .foot .row { display:flex; gap:.7em; align-items:baseline; flex-wrap:wrap; }
+  .foot .k { flex:none; min-width: clamp(64px,17cqw,92px); color: var(--cyan); font-weight:800; }
+  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; color:#fff;
+    background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); border-radius:5px; padding:1px 6px; }
+  .foot .sm { color: var(--silver); opacity:.85; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .kicker,h1,.intro,.gallery,.perks,.fit,.cta,.foot{opacity:1!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <div class="bg" aria-hidden="true">
+      <span class="formula f1">E = mc²</span>
+      <span class="formula f2">F = ma</span>
+      <span class="formula f3">∮ E·dl = −dΦ/dt</span>
+      <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+    </div>
+
+    <div class="inner">
+      <div class="topbar">
+        <div>
+          <div class="kicker">物理社招新 · PHYSICS SOCIETY</div>
+          <h1>让物理从公式<br><b>跃入现实</b></h1>
+        </div>
+        <div class="cradle" aria-hidden="true">
+          <div class="bar"></div>
+          <div class="ball b0"><div class="str"></div><div class="bo"></div></div>
+          <div class="ball b1"><div class="str"></div><div class="bo"></div></div>
+          <div class="ball b2"><div class="str"></div><div class="bo"></div></div>
+          <div class="ball b3"><div class="str"></div><div class="bo"></div></div>
+          <div class="ball b4"><div class="str"></div><div class="bo"></div></div>
+        </div>
+      </div>
+
+      <p class="intro">以实验探索、知识分享与跨社联动为核心的学术社团。物理周、物理实验秀、物理情景剧、电磁学讲座、纸飞机大赛、纹影摄影、空间站模拟器…… 在动手实践中点亮科学思维。</p>
+
+      <div class="section-t">实验现场 · IN ACTION</div>
+      <div class="gallery">
+        <figure class="shot wide">
+          <img src="physics/assets/flames.jpg" alt="鲁本斯管火焰" loading="lazy">
+          <figcaption>鲁本斯管 · 声音点燃的火焰</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="physics/assets/air-cannon.jpg" alt="空气炮" loading="lazy">
+          <figcaption>物理秀 · 空气炮</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="physics/assets/bernoulli.jpg" alt="伯努利吸尘器" loading="lazy">
+          <figcaption>科技节 · 伯努利吸尘器</figcaption>
+        </figure>
+      </div>
+
+      <div class="section-t">活动亮点 · HIGHLIGHTS</div>
+      <div class="perks">
+        <div class="perk"><span class="h">趣味实验</span> 火焰龙卷风、伯努利吸尘器、电磁炮等实验演示</div>
+        <div class="perk"><span class="h">学术探索</span> 电磁学、轨道力学、空气动力学等主题分享</div>
+        <div class="perk"><span class="h">创意舞台</span> 物理秀与戏剧结合，让科学更生动</div>
+        <div class="perk"><span class="h">跨社联动</span> 与天文社、摄影社、FTC 队伍合作展示</div>
+      </div>
+
+      <div class="fit">适合人群：<b>Anyone!</b> 热爱科学、喜欢实验、愿意思考 —— 还有大量 C 时间！</div>
+      <div class="cta">加入物理社，一起发现世界运行的底层逻辑！</div>
+
+      <div class="foot">
+        <div class="row"><span class="k">社长</span><span class="sm">孙敬涵 Marc</span><span class="mono">Proud_to_be_Marc</span></div>
+        <div class="row"><span class="k">副社长</span><span class="mono">Irvinshuwenshen457</span><span class="mono">MandyGYMM</span><span class="mono">Ratlymond</span></div>
+        <div class="row"><span class="k">指导老师</span><span class="sm">杨月苓 Sophie 老师</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

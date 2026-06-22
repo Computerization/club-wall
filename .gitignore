@@ -33,5 +33,6 @@ dist-ssr
 !.env.example
 
 
-materials/社团招新海报内容收集.xlsx
-materials/社团招新海报内容收集-2
+materials
+public/image__
+src/data/clubs__.ts

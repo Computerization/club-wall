@@ -82,15 +82,12 @@
 | 2  | Prologue 动物保护社 | `prologue` |
 | 3  | 世外汽车社 Power Galaxy | `power-galaxy` |
 | 4  | 轻羽飞扬 WFLA Badminton | `badminton` |
-| 18 | Asclepius 急救医学社 | `asclepius` |
 | 30 | 腰旗橄榄球社 | `flag-football` |
 | 47 | 物理社 Physics Society | `physics` |
 | 48 | Modi 3D建模社 | `modi-3d` |
 | 53 | 響日语社 Hibiki | `hibiki` |
 | 55 | 汉文化社 | `han-culture` |
-| 56 | Voice | `voice` |
 | 57 | 极客工坊 E3 Lab | `e3-lab` |
-| 58 | 深蓝 BlueX | `bluex` |
 | 62 | Origin 起源社 | `origin` |
 
 ---

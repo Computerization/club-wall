@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>響 日语社 Hibiki · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #FBF4E4; }
+  * { box-sizing: border-box; }
+  :root {
+    --vermilion: #D9483B;
+    --navy: #2C3E66;
+    --sakura: #F4B8C4;
+    --orange: #EE9A4D;
+    --cream: #FBF4E4;
+    --ink: #3a3326;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background:
+      radial-gradient(60% 40% at 85% 8%, #FDEFD6 0%, transparent 60%),
+      linear-gradient(180deg, #FCF6E8, #FBF1DD);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(24px, 6.5cqw, 44px) clamp(20px, 6cqw, 38px) clamp(22px, 6cqw, 40px);
+  }
+  /* 假名水印 */
+  .kana { position:absolute; z-index:0; pointer-events:none; color: var(--navy); opacity:.08; font-weight:800;
+    font-size: 13cqw; letter-spacing:.1em; }
+  .kana.k1{ top:40%; left:-1%; } .kana.k2{ bottom:6%; right:-1%; font-size:10cqw; }
+  /* 飘落樱花 */
+  .petals { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .petal { position:absolute; top:-6cqw; width:3.2cqw; height:3.2cqw; background: var(--sakura);
+    border-radius: 60% 0 60% 0; opacity:.85; animation: fall linear infinite; }
+  .petal:nth-child(1){ left:12%; animation-duration:9s; animation-delay:0s; }
+  .petal:nth-child(2){ left:34%; animation-duration:11s; animation-delay:2s; background:#F7C9A8; }
+  .petal:nth-child(3){ left:58%; animation-duration:8s;  animation-delay:1s; }
+  .petal:nth-child(4){ left:76%; animation-duration:12s; animation-delay:3.5s; background:#F7C9A8; }
+  .petal:nth-child(5){ left:90%; animation-duration:10s; animation-delay:.6s; }
+  @keyframes fall {
+    0%{ transform: translateY(0) rotate(0); opacity:0; }
+    12%{ opacity:.85; }
+    100%{ transform: translateY(180cqw) rotate(420deg); opacity:.5; }
+  }
+
+  .inner { position:relative; z-index:1; }
+  .topline { display:flex; align-items:center; gap:.6em; font-size: clamp(18px,5cqw,34px);
+    opacity:0; animation: rise .8s ease-out .06s forwards; }
+  .topline .badge { font-size: clamp(10px,2cqw,12.5px); font-weight:800; letter-spacing:.28em; text-indent:.28em;
+    color:#fff; background: var(--navy); border-radius:99px; padding: clamp(5px,1.3cqw,8px) clamp(11px,2.8cqw,16px); }
+
+  h1 { margin: clamp(12px,3.4cqw,22px) 0 0; line-height:1; }
+  .jp { display:block; font-size: clamp(40px, 12.5cqw, 86px); font-weight:900; color: var(--vermilion);
+    letter-spacing:.02em; text-shadow: .6cqw .6cqw 0 var(--sakura);
+    opacity:0; animation: rise .8s ease-out .14s forwards; }
+  .jp .ring { color: var(--navy); }
+  .cn { display:block; margin-top: clamp(4px,1.2cqw,8px); font-size: clamp(16px,4.4cqw,28px); font-weight:800; color: var(--navy);
+    letter-spacing:.16em; opacity:0; animation: rise .8s ease-out .24s forwards; }
+  .lead { margin: clamp(12px,3.4cqw,22px) 0 0; font-size: clamp(12.5px,2.6cqw,15px); line-height:1.8; color:#5a5040; max-width:94%;
+    opacity:0; animation: rise .8s ease-out .32s forwards; }
+
+  /* 活动标签 */
+  .acts { margin: clamp(18px,4.6cqw,30px) 0 0; display:grid; gap: clamp(8px,2cqw,12px);
+    opacity:0; animation: rise .8s ease-out .4s forwards; }
+  .act { display:flex; align-items:center; gap:.7em; background:#fff; border:2px solid var(--sakura);
+    border-radius: clamp(12px,3cqw,18px); padding: clamp(9px,2.4cqw,14px) clamp(12px,3cqw,18px);
+    font-size: clamp(12.5px,2.7cqw,15.5px); font-weight:700; color: var(--ink);
+    box-shadow: 0 5px 14px rgba(217,72,59,.08); }
+  .act .em { font-size: 1.5em; flex:none; }
+
+  /* 成果条 */
+  .win { margin: clamp(18px,4.6cqw,30px) 0 0; background: linear-gradient(100deg, var(--vermilion), #e9685c);
+    color:#fff; border-radius: clamp(12px,3cqw,18px); padding: clamp(13px,3.4cqw,20px) clamp(15px,4cqw,24px);
+    box-shadow: 0 10px 24px rgba(217,72,59,.28); opacity:0; animation: rise .8s ease-out .48s forwards; }
+  .win .lbl { font-size: clamp(10px,2cqw,12px); letter-spacing:.24em; opacity:.85; }
+  .win .big { font-size: clamp(16px,4cqw,24px); font-weight:900; margin-top:.3em; }
+  .win .big b { background:#fff; color: var(--vermilion); border-radius:8px; padding:0 .35em; }
+
+  .foot { margin: clamp(18px,4.6cqw,28px) 0 0; border-top:2px dashed var(--sakura); padding-top: clamp(13px,3.4cqw,20px);
+    display:grid; gap: clamp(6px,1.6cqw,10px); font-size: clamp(11.5px,2.4cqw,14px);
+    opacity:0; animation: rise .8s ease-out .56s forwards; }
+  .foot .row { display:flex; gap:.6em; align-items:baseline; flex-wrap:wrap; }
+  .foot .k { flex:none; min-width: clamp(64px,17cqw,92px); color: var(--navy); font-weight:800; }
+  .foot .nm { color:#7a6f5c; }
+  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; color: var(--vermilion);
+    background:#fff; border:1px solid var(--sakura); border-radius:5px; padding:1px 6px; font-weight:700; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .topline,.jp,.cn,.lead,.acts,.win,.foot{opacity:1!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <span class="kana k1" aria-hidden="true">あいうえお</span>
+    <span class="kana k2" aria-hidden="true">こんにちは</span>
+    <div class="petals" aria-hidden="true">
+      <span class="petal"></span><span class="petal"></span><span class="petal"></span><span class="petal"></span><span class="petal"></span>
+    </div>
+
+    <div class="inner">
+      <div class="topline">
+        <span>⛩️🦊🍙</span>
+        <span class="badge">HIBIKI · 日本文化</span>
+      </div>
+      <h1>
+        <span class="jp">日本語社 <span class="ring">響</span></span>
+        <span class="cn">HIBIKI 日语社</span>
+      </h1>
+      <p class="lead">关注日本文化的兴趣交流平台 —— 轻量、趣味、包容开放。从假名到动漫，从美食到连麦，治愈系的和风小角落，等你来坐坐。</p>
+
+      <div class="acts">
+        <div class="act"><span class="em">🍣</span><span>美食探店计划</span></div>
+        <div class="act"><span class="em">🎮</span><span>人狼游戏 + 角色配音</span></div>
+        <div class="act"><span class="em">🌸</span><span>零基础日语小课堂</span></div>
+        <div class="act"><span class="em">🌏</span><span>线上与日本人连麦交流</span></div>
+        <div class="act"><span class="em">🎨</span><span>跨社联动（动漫社、翻唱社等）</span></div>
+      </div>
+
+      <div class="win">
+        <div class="lbl">社团成果 · ACHIEVEMENT</div>
+        <div class="big">前社长带 <b>0 基础</b> 社员，一路辅导到 <b>N3</b> 水平</div>
+      </div>
+
+      <div class="foot">
+        <div class="row"><span class="k">社长</span><span class="nm">孙乾瑞</span><span class="mono">CharlieQR</span></div>
+        <div class="row"><span class="k">副社长</span><span class="mono">yyq-100616</span><span class="mono">TS_151715661525_ngu</span></div>
+        <div class="row"><span class="k">指导老师</span><span class="nm">胡蓉老师</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

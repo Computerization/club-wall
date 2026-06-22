@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Footer from '../components/Footer';
 import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
@@ -14,6 +15,64 @@ function BackButton({ onClick }: { onClick: () => void }) {
       <ArrowLeft className="h-4 w-4" />
       <span className="font-medium">返回 Back</span>
     </button>
+  );
+}
+
+// Embeds a generated HTML poster. The poster is width-fluid and content-height,
+// so we measure its document height (same-origin, served from our own domain)
+// and grow the iframe to match — no inner scrollbar, matches the image posters.
+function PosterFrame({ src, title }: { src: string; title: string }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    const iframe = ref.current;
+    if (!iframe) return;
+
+    let observer: ResizeObserver | null = null;
+
+    const measure = () => {
+      const doc = iframe.contentDocument;
+      if (!doc) return;
+      const h = doc.documentElement?.scrollHeight || doc.body?.scrollHeight || 0;
+      if (h) setHeight(h);
+    };
+
+    const onLoad = () => {
+      measure();
+      const doc = iframe.contentDocument;
+      if (doc && 'ResizeObserver' in window) {
+        observer = new ResizeObserver(measure);
+        observer.observe(doc.documentElement);
+      }
+    };
+
+    iframe.addEventListener('load', onLoad);
+    // Already loaded (e.g. cached) before the listener attached.
+    if (iframe.contentDocument?.readyState === 'complete') onLoad();
+
+    return () => {
+      iframe.removeEventListener('load', onLoad);
+      observer?.disconnect();
+    };
+  }, [src]);
+
+  return (
+    <iframe
+      ref={ref}
+      src={src}
+      title={title}
+      loading="lazy"
+      scrolling="no"
+      // Before the first measure lands, hold a poster-like ratio so the layout
+      // doesn't jump; once measured we switch to the exact content height.
+      style={
+        height
+          ? { height: `${height}px`, border: 0, display: 'block' }
+          : { aspectRatio: '3 / 4', border: 0, display: 'block' }
+      }
+      className="w-full rounded-2xl shadow-lift ring-1 ring-white/10"
+    />
   );
 }
 
@@ -106,13 +165,17 @@ export default function ClubDetail() {
                     </div>
                   )}
 
-                  {/* The club's own recruitment poster, shown full so it's readable. */}
-                  {club.posters.length > 0 && (
+                  {/* The club's own recruitment poster, shown full so it's readable.
+                      Either a generated HTML poster (iframe) or submitted images. */}
+                  {(club.posterHtml || club.posters.length > 0) && (
                     <div className="mt-8">
                       <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: meta?.accent }}>
                         招新海报 · Poster
                       </h3>
                       <div className="flex flex-col gap-6">
+                        {club.posterHtml && (
+                          <PosterFrame src={asset(club.posterHtml)} title={`${club.name} 招新海报`} />
+                        )}
                         {club.posters.map((poster, i) => (
                           <img
                             key={poster}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汉文化社 Han Culture · 招新海报</title>
+<style>
+  html, body { margin: 0; container-type: inline-size; background: #F3EAD6; }
+  * { box-sizing: border-box; }
+  :root {
+    --red: #C8403A;
+    --indigo: #2E4B6B;
+    --yellow: #E8B23A;
+    --teal: #3E8E7E;
+    --gold: #C9A24B;
+    --paper: #F5EEDC;
+    --ink: #3a2e26;
+  }
+  .poster {
+    position: relative; width: 100%; overflow: hidden;
+    background:
+      radial-gradient(80% 50% at 50% 0%, #FAF4E6 0%, transparent 60%),
+      linear-gradient(180deg, #F6EFDD, #F0E6CF);
+    color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    padding: clamp(26px, 7cqw, 46px) clamp(20px, 6cqw, 38px) clamp(22px, 6cqw, 40px);
+  }
+  /* 半抽象山脉轮廓 */
+  .mountains { position:absolute; left:0; right:0; bottom:0; z-index:0; width:100%; height:38%; opacity:.16; }
+  /* 四角印章 */
+  .seal { position:absolute; z-index:1; width: clamp(34px,9cqw,58px); height: clamp(34px,9cqw,58px);
+    background: var(--red); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size: clamp(16px,4.2cqw,28px); font-weight:900; box-shadow: 0 4px 12px rgba(200,64,58,.3);
+    opacity:0; animation: stamp .6s ease-out forwards; }
+  .seal.s1{ top: clamp(16px,4cqw,28px); left: clamp(14px,4cqw,26px); animation-delay:.5s; }
+  .seal.s2{ top: clamp(16px,4cqw,28px); right: clamp(14px,4cqw,26px); background: var(--indigo); animation-delay:.62s; }
+  .seal.s3{ bottom: clamp(16px,4cqw,28px); left: clamp(14px,4cqw,26px); background: var(--indigo); animation-delay:.74s; }
+  .seal.s4{ bottom: clamp(16px,4cqw,28px); right: clamp(14px,4cqw,26px); animation-delay:.86s; }
+  @keyframes stamp { from{opacity:0;transform:scale(1.5) rotate(-8deg)} to{opacity:.96;transform:scale(1) rotate(-4deg)} }
+
+  .inner { position:relative; z-index:2; text-align:center; }
+  .badge { display:inline-block; font-size: clamp(10px,2cqw,12.5px); font-weight:800; letter-spacing:.3em; text-indent:.3em;
+    color:#fff; background: var(--indigo); border-radius:99px; padding: clamp(5px,1.3cqw,8px) clamp(13px,3.2cqw,19px);
+    opacity:0; animation: rise .8s ease-out .08s forwards; }
+  h1 { margin: clamp(12px,3.4cqw,22px) 0 0; }
+  .title { font-size: clamp(44px, 13cqw, 90px); font-weight:900; color: var(--red); letter-spacing:.1em;
+    text-shadow: .5cqw .5cqw 0 var(--gold); opacity:0; animation: rise .8s ease-out .16s forwards; }
+  .en { display:block; margin-top: clamp(3px,1cqw,7px); font-size: clamp(13px,3.2cqw,20px); font-weight:800; letter-spacing:.3em;
+    text-indent:.3em; color: var(--indigo); opacity:0; animation: rise .8s ease-out .26s forwards; }
+  .lead { margin: clamp(12px,3.4cqw,20px) auto 0; font-size: clamp(12.5px,2.7cqw,15px); line-height:1.8; color:#5a4a3c; max-width:90%;
+    opacity:0; animation: rise .8s ease-out .34s forwards; }
+
+  /* 衣食筑行 */
+  .pillars { margin: clamp(18px,4.6cqw,30px) 0 0; display:grid; grid-template-columns: repeat(4,1fr); gap: clamp(6px,1.6cqw,10px);
+    opacity:0; animation: rise .8s ease-out .42s forwards; }
+  .pillar { background:#fff; border:1px solid #E6D6B0; border-radius: clamp(10px,2.6cqw,16px);
+    padding: clamp(9px,2.4cqw,15px) clamp(4px,1.2cqw,8px); }
+  .pillar .em { font-size: clamp(20px,5cqw,34px); }
+  .pillar .zh { font-size: clamp(15px,3.6cqw,22px); font-weight:900; color: var(--red); margin-top:.1em; }
+  .pillar .d { font-size: clamp(9.5px,2cqw,11.5px); color:#7a6a58; margin-top:.2em; line-height:1.3; }
+
+  .section-t { margin: clamp(18px,4.6cqw,28px) 0 clamp(8px,2cqw,12px); font-size: clamp(11px,2.2cqw,13px);
+    font-weight:800; letter-spacing:.2em; color: var(--indigo); text-align:left; }
+  .section-t::before { content:"❖ "; color: var(--red); }
+
+  .acts { display:flex; flex-wrap:wrap; gap: clamp(6px,1.6cqw,10px); justify-content:flex-start;
+    opacity:0; animation: rise .8s ease-out .5s forwards; }
+  .act { font-size: clamp(11.5px,2.4cqw,14px); font-weight:700; color: var(--ink); background:#fff;
+    border:1px solid #E6D6B0; border-radius:99px; padding: clamp(6px,1.5cqw,9px) clamp(11px,2.8cqw,16px); }
+
+  /* 我们讨论这些事 */
+  .topics { background: var(--indigo); color:#f3ece0; border-radius: clamp(12px,3cqw,18px);
+    padding: clamp(14px,3.6cqw,22px) clamp(15px,4cqw,24px); text-align:left;
+    opacity:0; animation: rise .8s ease-out .56s forwards; }
+  .topics .h { font-size: clamp(13px,2.8cqw,16px); font-weight:900; color: var(--yellow); margin-bottom:.5em; }
+  .topics ul { margin:0; padding:0; list-style:none; display:grid; gap: clamp(5px,1.4cqw,9px); }
+  .topics li { font-size: clamp(11.5px,2.5cqw,14px); line-height:1.5; padding-left:1.2em; position:relative; }
+  .topics li::before { content:"—"; position:absolute; left:0; color: var(--yellow); }
+
+  .foot { margin: clamp(18px,4.6cqw,28px) 0 0; border-top:2px dashed #DcC9A0; padding-top: clamp(13px,3.4cqw,20px);
+    display:grid; gap: clamp(6px,1.6cqw,10px); font-size: clamp(11.5px,2.4cqw,14px); text-align:left;
+    opacity:0; animation: rise .8s ease-out .62s forwards; }
+  .foot .row { display:flex; gap:.6em; align-items:baseline; flex-wrap:wrap; }
+  .foot .k { flex:none; min-width: clamp(64px,17cqw,92px); color: var(--red); font-weight:800; }
+  .foot .nm { color:#7a6a58; }
+  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; color: var(--indigo);
+    background:#fff; border:1px solid #E6D6B0; border-radius:5px; padding:1px 6px; font-weight:700; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important}
+    .badge,.title,.en,.lead,.pillars,.acts,.topics,.foot{opacity:1!important} .seal{opacity:.96!important} }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <svg class="mountains" viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 150 L60 70 L110 110 L180 40 L250 100 L320 55 L400 110 L400 150 Z" fill="#2E4B6B"/>
+    </svg>
+    <span class="seal s1">衣</span>
+    <span class="seal s2">食</span>
+    <span class="seal s3">筑</span>
+    <span class="seal s4">行</span>
+
+    <div class="inner">
+      <span class="badge">HAN CULTURE · 新中式国潮</span>
+      <h1>
+        <span class="title">汉文化社</span>
+        <span class="en">回溯历史 · 重看今世</span>
+      </h1>
+      <p class="lead">这里包含着中国上下五千年的衣食住行。用现代插画的眼光，与传统来一场「古今碰撞」的对话。</p>
+
+      <div class="pillars">
+        <div class="pillar"><div class="em">👘</div><div class="zh">衣</div><div class="d">汉服·交领宽袖</div></div>
+        <div class="pillar"><div class="em">🥮</div><div class="zh">食</div><div class="d">青团·汤圆·心意</div></div>
+        <div class="pillar"><div class="em">🏯</div><div class="zh">筑</div><div class="d">马头墙·土楼</div></div>
+        <div class="pillar"><div class="em">🐎</div><div class="zh">行</div><div class="d">车马·古驿道</div></div>
+      </div>
+
+      <div class="section-t">活动亮点 · HIGHLIGHTS</div>
+      <div class="acts">
+        <span class="act">🧵 缠花手工坊</span>
+        <span class="act">🖌 养老院志愿书法</span>
+        <span class="act">📜 文言文词序讲座</span>
+        <span class="act">✍️ 西夏文造字体验</span>
+        <span class="act">🍡 传统节日美食</span>
+        <span class="act">🌏 跨文化联动</span>
+      </div>
+
+      <div class="section-t">我们讨论这些事 ——</div>
+      <div class="topics">
+        <div class="h">汉文化社在做什么</div>
+        <ul>
+          <li>唐诗宋词里的情感共鸣</li>
+          <li>现代青年写诗会被笑「文青病」吗？传统文化如何重成潮流？</li>
+          <li>日本和服与中国汉服的差异与相通</li>
+          <li>中古汉语读诗词是什么感觉（与有声书社联动）</li>
+        </ul>
+      </div>
+
+      <div class="foot">
+        <div class="row"><span class="k">社长</span><span class="nm">孙乾瑞</span><span class="mono">CharlieQR</span></div>
+        <div class="row"><span class="k">副社长</span><span class="nm">徐靖舜</span><span class="mono">wxid_1i275uwduuut12</span></div>
+        <div class="row"><span class="k">指导老师</span><span class="nm">於慧怡老师</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
