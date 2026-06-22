@@ -17,7 +17,7 @@ export default function Hero({ clubCount, categoryCount }: HeroProps) {
       <div className="pointer-events-none absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full bg-brand/30 blur-3xl animate-float delay-300" />
 
       <p className="eyebrow mb-6 animate-fade-up text-xs font-medium text-brand-light">
-        WFLA · 2026 迎新季 Club Recruitment
+        WFLA · 2026 招新季 Club Recruitment
       </p>
 
       <h1 className="animate-fade-up delay-100 font-display text-5xl font-bold leading-[1.05] sm:text-7xl md:text-8xl">

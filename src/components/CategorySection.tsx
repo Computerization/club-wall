@@ -250,7 +250,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchCancel}
         >
-          <div className="flex w-max gap-5 py-2">
+          <div className={`flex gap-5 py-2 ${disableAutoScroll ? 'w-full flex-wrap justify-center' : 'w-max'}`}>
             {displayClubs.map((club, index) => (
               <div
                 key={`${club.id}-${index}`}

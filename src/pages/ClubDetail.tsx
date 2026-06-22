@@ -83,6 +83,25 @@ export default function ClubDetail() {
             <div className="animate-fade-up">
               <ClubHeader club={club} />
 
+              {/* The club's own recruitment poster, shown full so it's readable. */}
+              {club.posters.length > 0 && (
+                <section className="mt-10">
+                  <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: meta?.accent }}>
+                    招新海报 · Poster
+                  </h3>
+                  <div className="flex flex-col items-center gap-6">
+                    {club.posters.map((poster, i) => (
+                      <img
+                        key={poster}
+                        src={poster}
+                        alt={`${club.name} 海报 ${i + 1}`}
+                        className="w-full max-w-2xl rounded-2xl shadow-lift ring-1 ring-white/10"
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
               {/* Intro */}
               <div className="mt-10 grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2">
@@ -127,6 +146,24 @@ export default function ClubDetail() {
                       </div>
                     )}
                   </dl>
+
+                  {club.qrcodes.length > 0 && (
+                    <div className="mt-5 border-t border-white/10 pt-5">
+                      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+                        扫码进群 · Join Group
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {club.qrcodes.map((qr, i) => (
+                          <img
+                            key={qr}
+                            src={qr}
+                            alt={`${club.name} 招新群二维码 ${i + 1}`}
+                            className="w-full rounded-lg bg-white p-2"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </aside>
               </div>
             </div>
