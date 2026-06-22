@@ -13,9 +13,9 @@ interface ClubListProps {
 export default function ClubList({ clubs, onClubClick }: ClubListProps) {
   return (
     <section className="px-6 pb-16">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {clubs.map((club) => (
-          <div key={club.id} className="h-[300px] animate-fade-up">
+          <div key={club.id} className="aspect-square animate-fade-up">
             <GalleryCard club={club} onClick={onClubClick} />
           </div>
         ))}

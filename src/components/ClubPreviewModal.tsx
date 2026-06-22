@@ -50,23 +50,28 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
       {/* Panel */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="glass-strong relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-lift animate-scale-in md:flex-row md:max-h-[82vh]"
+        className="glass-strong relative flex w-full max-w-[95vw] max-h-[90vh] flex-col overflow-hidden rounded-3xl shadow-lift animate-scale-in md:max-h-none md:w-auto md:flex-row"
         style={{ ['--accent' as string]: meta.accent }}
       >
-        {/* Visual side */}
-        <div className="relative h-56 w-full overflow-hidden md:h-auto md:w-[46%]">
+        {/* Visual side — fixed height on desktop with the width following the
+            image's aspect ratio, so the cover fills its box edge-to-edge with no
+            cropping and no bands. */}
+        <div className="relative flex shrink-0 items-center justify-center">
           {src ? (
-            <img src={src} alt={club.name} className="h-full w-full object-cover" />
+            <img
+              src={src}
+              alt={club.name}
+              className="block mx-auto w-auto max-h-[45vh] max-w-full md:mx-0 md:h-[480px] md:max-h-none md:max-w-none"
+            />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-white/40">
+            <div className="flex h-56 w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-white/40 md:h-[480px] md:w-72">
               {club.name}
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:bg-gradient-to-r" />
         </div>
 
-        {/* Detail side */}
-        <div className="flex flex-1 flex-col p-6 sm:p-8">
+        {/* Detail side — matches the cover's fixed height and scrolls internally. */}
+        <div className="flex w-full flex-1 flex-col overflow-y-auto p-6 sm:p-8 min-h-0 md:h-[480px] md:w-[380px] md:flex-none">
           <div
             className="mb-4 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider"
             style={{ color: meta.accent, border: `1px solid ${meta.accent}`, background: 'rgba(255,255,255,0.03)' }}
@@ -81,6 +86,20 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
           <p className="mt-2 text-sm font-medium uppercase tracking-[0.18em]" style={{ color: meta.accent }}>
             {club.shortDesc}
           </p>
+
+          {club.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {club.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full px-2.5 py-1 text-xs text-white/80"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${meta.accent}40` }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           <p className="mt-5 text-sm leading-relaxed text-white/70">
             {clubBlurb(club)}

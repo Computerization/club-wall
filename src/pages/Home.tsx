@@ -19,7 +19,8 @@ export default function Home() {
   const filteredClubs = searchQuery
     ? clubs.filter((club) =>
         club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        club.shortDesc.toLowerCase().includes(searchQuery.toLowerCase())
+        club.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        club.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : clubs;
 

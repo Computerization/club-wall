@@ -92,6 +92,19 @@ export default function ClubDetail() {
                   <p className="text-base leading-relaxed text-white/75">
                     {clubBlurb(club, '，留下属于你的高中印记')}
                   </p>
+                  {club.tags.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {club.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full px-3 py-1 text-sm text-white/80"
+                          style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${meta?.accent}40` }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <aside className="glass rounded-2xl p-5">

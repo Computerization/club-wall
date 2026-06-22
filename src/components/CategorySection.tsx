@@ -5,7 +5,7 @@ import { getCategoryMeta } from '../data/categoryMeta';
 import GalleryCard from './GalleryCard';
 
 // ============== Tuning constants ==============
-const CARD_WIDTH = 260;
+const CARD_WIDTH = 340;
 const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
 const MOVE_THRESHOLD = 5;
