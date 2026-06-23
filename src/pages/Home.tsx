@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -26,12 +26,16 @@ export default function Home() {
 
   const isSearching = searchQuery.length > 0;
 
-  // Show category rows largest-first, by how many clubs each holds.
-  const orderedCategories = [...categories].sort(
-    (a, b) =>
-      clubs.filter((club) => club.category === b).length -
-      clubs.filter((club) => club.category === a).length
-  );
+  // Randomize the category row order once per page load (Fisher-Yates), so the
+  // wall feels fresh on each refresh. The Forming row stays pinned at the bottom.
+  const orderedCategories = useMemo(() => {
+    const arr = [...categories];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, []);
 
   // Rendered as its own row below the auto-scrolling categories; `categories`
   // intentionally excludes this group so it only appears here, statically.
