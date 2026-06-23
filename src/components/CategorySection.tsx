@@ -271,7 +271,11 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchCancel}
         >
-          <div className={`flex gap-5 py-2 ${disableAutoScroll ? 'w-full flex-wrap justify-center' : 'w-max'}`}>
+          {/* Auto-scroll rows triplicate into a w-max loop; the static rows keep a
+              single horizontal strip (w-max) that mx-auto centers when it's
+              narrower than the viewport and lets scroll/swipe when it isn't —
+              never wrapping into a vertical stack on phones. */}
+          <div className={`flex gap-5 py-2 w-max ${disableAutoScroll ? 'mx-auto' : ''}`}>
             {displayClubs.map((club, index) => (
               <div
                 key={`${club.id}-${index}`}
