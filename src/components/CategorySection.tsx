@@ -5,7 +5,13 @@ import { getCategoryMeta } from '../data/categoryMeta';
 import GalleryCard from './GalleryCard';
 
 // ============== Tuning constants ==============
+// Desktop poster tiles are square; on narrow phones we switch to a smaller,
+// portrait card so more than one is visible at a time in the marquee.
 const CARD_WIDTH = 340;
+const CARD_HEIGHT = 340;
+const MOBILE_CARD_WIDTH = 220;
+const MOBILE_CARD_HEIGHT = 300;
+const MOBILE_BREAKPOINT = '(max-width: 639px)';
 const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
 const MOVE_THRESHOLD = 5;
@@ -23,6 +29,9 @@ interface CategorySectionProps {
 
 export default function CategorySection({ category, clubs, onClubClick, rowIndex = 0, disableAutoScroll = false }: CategorySectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // Card dimensions drive both the rendered tile size and the seamless-loop
+  // math, so they're a single reactive source shrunk on narrow phones.
+  const [card, setCard] = useState({ w: CARD_WIDTH, h: CARD_HEIGHT });
   const [isDragging, setIsDragging] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -38,13 +47,25 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   // Direction: even rows scroll right-to-left (-1), odd rows left-to-right (1).
   const direction = useMemo(() => rowIndex % 2 === 0 ? -1 : 1, [rowIndex]);
 
-  const setWidth = useMemo(() => clubs.length * CARD_WIDTH + (clubs.length - 1) * CARD_GAP, [clubs]);
+  const setWidth = useMemo(() => clubs.length * card.w + (clubs.length - 1) * CARD_GAP, [clubs, card.w]);
   const middleStart = setWidth;
   const middleEnd = 2 * setWidth;
 
   // Detect touch / mobile devices.
   useEffect(() => {
     isMobile.current = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+  }, []);
+
+  // Swap to the compact portrait card on narrow viewports.
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_BREAKPOINT);
+    const apply = () =>
+      setCard(mq.matches
+        ? { w: MOBILE_CARD_WIDTH, h: MOBILE_CARD_HEIGHT }
+        : { w: CARD_WIDTH, h: CARD_HEIGHT });
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
   }, []);
 
   // When auto-scroll is disabled, keep it permanently off.
@@ -185,9 +206,9 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   const scrollByOne = useCallback((dir: 'left' | 'right') => {
     if (!containerRef.current) return;
-    const amount = dir === 'left' ? -(CARD_WIDTH + CARD_GAP) : (CARD_WIDTH + CARD_GAP);
+    const amount = dir === 'left' ? -(card.w + CARD_GAP) : (card.w + CARD_GAP);
     containerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-  }, []);
+  }, [card.w]);
 
   const displayClubs = useMemo(() => {
     if (clubs.length === 0) return [];
@@ -254,8 +275,8 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
             {displayClubs.map((club, index) => (
               <div
                 key={`${club.id}-${index}`}
-                style={{ width: CARD_WIDTH }}
-                className="h-[340px] shrink-0"
+                style={{ width: card.w, height: card.h }}
+                className="shrink-0"
               >
                 <GalleryCard club={club} onClick={handleCardClick} />
               </div>
