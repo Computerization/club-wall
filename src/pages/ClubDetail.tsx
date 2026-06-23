@@ -32,18 +32,22 @@ function PosterFrame({ src, title }: { src: string; title: string }) {
     let observer: ResizeObserver | null = null;
 
     const measure = () => {
-      const doc = iframe.contentDocument;
-      if (!doc) return;
-      const h = doc.documentElement?.scrollHeight || doc.body?.scrollHeight || 0;
+      const body = iframe.contentDocument?.body;
+      if (!body) return;
+      // documentElement.scrollHeight is floored at the iframe's own viewport
+      // height, so a poster shorter than the placeholder aspect-ratio would lock
+      // in that inflated height (leaving a gap below). The body's content box is
+      // not viewport-clamped, so it reports the poster's true height either way.
+      const h = Math.ceil(body.getBoundingClientRect().height);
       if (h) setHeight(h);
     };
 
     const onLoad = () => {
       measure();
-      const doc = iframe.contentDocument;
-      if (doc && 'ResizeObserver' in window) {
+      const body = iframe.contentDocument?.body;
+      if (body && 'ResizeObserver' in window) {
         observer = new ResizeObserver(measure);
-        observer.observe(doc.documentElement);
+        observer.observe(body);
       }
     };
 

@@ -12,101 +12,139 @@
     --sky-deep: #2176B6;
     --yellow: #FFD23F;
     --yellow-deep: #F4B100;
-    --ink: #1c3a4f;
+    --ink: #173851;
+    --court: #2f9e6e;
+    --court-deep: #25895e;
   }
   .poster {
     position: relative; width: 100%; overflow: hidden;
-    background: linear-gradient(165deg, #EAF6FF 0%, #DCF0FF 45%, #FFF6D8 100%);
+    background:
+      radial-gradient(70% 50% at 82% 6%, rgba(255,210,63,.6) 0%, rgba(255,210,63,0) 60%),
+      linear-gradient(168deg, #EAF6FF 0%, #DCF0FF 40%, #CFEAFF 70%, #FFF3CE 100%);
     color: var(--ink);
     font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    padding: clamp(24px, 6.5cqw, 44px) clamp(20px, 6cqw, 38px) clamp(22px, 6cqw, 40px);
+    padding: clamp(22px,6cqw,40px) clamp(20px,6cqw,38px) 0;
   }
-  /* 阳光光斑 */
-  .sun { position: absolute; z-index: 0; right: -12cqw; top: -12cqw; width: 50cqw; height: 50cqw;
-    background: radial-gradient(circle, rgba(255,210,63,.55), rgba(255,210,63,0) 68%); }
-  /* 羽毛球沿弧线来回飞 */
-  .court { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-  .birdie { position: absolute; font-size: clamp(20px,5cqw,34px); will-change: transform; }
-  .b1 { top: 30%; left: 0;  animation: fly1 6s ease-in-out infinite; }
-  .b2 { top: 64%; left: 0;  animation: fly2 7.5s ease-in-out infinite; }
-  @keyframes fly1 {
-    0%{transform:translate(2cqw,6cqw) rotate(20deg)} 50%{transform:translate(78cqw,-8cqw) rotate(220deg)} 100%{transform:translate(2cqw,6cqw) rotate(380deg)} }
-  @keyframes fly2 {
-    0%{transform:translate(80cqw,4cqw) rotate(-20deg)} 50%{transform:translate(6cqw,-6cqw) rotate(-200deg)} 100%{transform:translate(80cqw,4cqw) rotate(-380deg)} }
 
-  .inner { position: relative; z-index: 1; }
-  .kicker {
-    display: inline-block; font-size: clamp(10px,2cqw,12.5px); font-weight: 800;
-    letter-spacing: .34em; text-indent: .34em; color: #fff;
-    background: var(--sky); border-radius: 99px; padding: clamp(5px,1.3cqw,8px) clamp(12px,3cqw,18px);
-    opacity:0; animation: rise .8s ease-out .1s forwards;
-  }
-  h1 { margin: clamp(16px,4.5cqw,28px) 0 0; line-height: 1.02; }
-  .title-cn {
-    display:block; font-size: clamp(36px, 11cqw, 72px); font-weight: 900; letter-spacing: .06em;
-    color: var(--sky-deep); text-shadow: 0 4px 0 #fff, 0 8px 18px rgba(33,118,182,.22);
-    opacity:0; animation: rise .8s ease-out .18s forwards;
-  }
-  .title-en {
-    display:block; margin-top: clamp(4px,1.2cqw,8px);
-    font-size: clamp(15px, 4cqw, 26px); font-weight: 800; letter-spacing: .12em;
-    color: var(--yellow-deep);
-    opacity:0; animation: rise .8s ease-out .3s forwards;
-  }
-  .slogan {
-    margin: clamp(16px,4.4cqw,28px) 0 0; font-size: clamp(15px,3.6cqw,22px); font-weight: 800; color: var(--ink);
-    opacity:0; animation: rise .8s ease-out .42s forwards;
-  }
-  .slogan span { color: var(--sky-deep); }
-  .sub { margin: clamp(6px,1.6cqw,10px) 0 0; font-size: clamp(12.5px,2.7cqw,15.5px); color: #436176; font-weight:600;
-    opacity:0; animation: rise .8s ease-out .5s forwards; }
+  /* 太阳光芒（缓慢旋转） */
+  .rays { position:absolute; right:-10cqw; top:-12cqw; width:58cqw; height:58cqw; z-index:0; pointer-events:none;
+    background: repeating-conic-gradient(from 0deg, rgba(255,210,63,.28) 0deg 7deg, rgba(255,210,63,0) 7deg 18deg);
+    border-radius:50%; -webkit-mask:radial-gradient(circle, #000 30%, transparent 66%); mask:radial-gradient(circle, #000 30%, transparent 66%);
+    animation: spin 38s linear infinite; }
+  .sun { position:absolute; right:6cqw; top:5cqw; width:18cqw; height:18cqw; z-index:0; border-radius:50%;
+    background: radial-gradient(circle at 38% 36%, #FFE27A, var(--yellow) 55%, var(--yellow-deep)); opacity:.85;
+    box-shadow:0 0 9cqw rgba(255,210,63,.55); }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .tags { margin: clamp(20px,5cqw,32px) 0 0; display:flex; flex-wrap:wrap; gap: clamp(7px,1.8cqw,11px);
-    opacity:0; animation: rise .8s ease-out .58s forwards; }
-  .tag { font-size: clamp(13px,2.8cqw,16px); font-weight: 800; color: #fff;
-    background: linear-gradient(120deg, var(--sky), var(--sky-deep));
-    border-radius: 99px; padding: clamp(6px,1.5cqw,9px) clamp(14px,3.4cqw,20px);
-    box-shadow: 0 6px 14px rgba(33,118,182,.25); }
-  .tag.alt { background: linear-gradient(120deg, var(--yellow), var(--yellow-deep)); color: #5a4200; box-shadow: 0 6px 14px rgba(244,177,0,.3); }
+  /* 羽毛球沿弧线来回飞（容器相对，自适应缩放） */
+  .birdie { position:absolute; z-index:1; width:clamp(22px,5.4cqw,38px); height:clamp(22px,5.4cqw,38px);
+    color:var(--sky-deep); filter:drop-shadow(0 4px 5px rgba(33,118,182,.25)); pointer-events:none; will-change:transform; }
+  .b1 { top:26%; left:0; animation: arc1 6.5s ease-in-out infinite; }
+  .b2 { top:60%; left:0; animation: arc2 8s ease-in-out infinite; }
+  @keyframes arc1 {
+    0%{transform:translate(3cqw,6cqw) rotate(20deg)} 50%{transform:translate(80cqw,-9cqw) rotate(210deg)} 100%{transform:translate(3cqw,6cqw) rotate(380deg)} }
+  @keyframes arc2 {
+    0%{transform:translate(82cqw,3cqw) rotate(-20deg)} 50%{transform:translate(5cqw,-7cqw) rotate(-200deg)} 100%{transform:translate(82cqw,3cqw) rotate(-380deg)} }
 
-  .foot { margin: clamp(22px,5.5cqw,34px) 0 0; border-top: 2px dashed #BcdCEF; padding-top: clamp(14px,3.6cqw,22px);
-    display:flex; align-items:center; gap: .7em; font-size: clamp(13px,2.8cqw,16px);
-    opacity:0; animation: rise .8s ease-out .66s forwards; }
-  .foot .k { color: var(--sky-deep); font-weight: 800; }
-  .foot .mono { font-family: ui-monospace,"SF Mono",Menlo,monospace; background:#fff; color: var(--sky-deep);
-    border:2px solid #BcdCEF; border-radius: 8px; padding: 3px 10px; font-weight:700; }
+  .inner { position:relative; z-index:2; }
+  .kicker { display:inline-flex; align-items:center; gap:.55em; font-size:clamp(10px,2cqw,12.5px); font-weight:800;
+    letter-spacing:.3em; text-indent:.3em; color:#fff; background:var(--sky); border-radius:99px;
+    padding:clamp(5px,1.3cqw,8px) clamp(13px,3.2cqw,19px); box-shadow:0 8px 16px rgba(33,118,182,.28);
+    opacity:0; animation:rise .8s ease-out .1s forwards; }
+  .kicker svg { width:1.2em; height:1.2em; }
 
-  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .kicker,.title-cn,.title-en,.slogan,.sub,.tags,.foot{opacity:1!important} }
+  h1 { margin:clamp(16px,4.5cqw,28px) 0 0; line-height:1.0; }
+  .title-cn { display:block; font-size:clamp(40px,12.5cqw,80px); font-weight:900; letter-spacing:.05em; color:var(--sky-deep);
+    text-shadow:0 4px 0 #fff, 0 10px 20px rgba(33,118,182,.22); opacity:0; animation:rise .8s ease-out .18s forwards; }
+  .title-en { display:block; margin-top:clamp(5px,1.4cqw,9px); font-size:clamp(15px,4cqw,26px); font-weight:800;
+    letter-spacing:.1em; color:var(--yellow-deep); opacity:0; animation:rise .8s ease-out .3s forwards; }
+
+  .slogan { margin:clamp(16px,4.4cqw,28px) 0 0; font-size:clamp(16px,3.8cqw,23px); font-weight:800; color:var(--ink);
+    opacity:0; animation:rise .8s ease-out .42s forwards; }
+  .slogan span { color:var(--sky-deep); }
+  .sub { margin:clamp(6px,1.6cqw,10px) 0 0; font-size:clamp(12.5px,2.7cqw,15.5px); color:#436176; font-weight:600;
+    opacity:0; animation:rise .8s ease-out .5s forwards; }
+
+  .tags { margin:clamp(20px,5cqw,32px) 0 0; display:flex; flex-wrap:wrap; gap:clamp(7px,1.8cqw,11px);
+    opacity:0; animation:rise .8s ease-out .58s forwards; }
+  .tag { font-size:clamp(13px,2.8cqw,16px); font-weight:800; color:#fff;
+    background:linear-gradient(120deg,var(--sky),var(--sky-deep)); border-radius:99px;
+    padding:clamp(6px,1.5cqw,9px) clamp(14px,3.4cqw,20px); box-shadow:0 6px 14px rgba(33,118,182,.25); }
+  .tag.alt { background:linear-gradient(120deg,var(--yellow),var(--yellow-deep)); color:#5a4200; box-shadow:0 6px 14px rgba(244,177,0,.3); }
+
+  .foot { margin:clamp(20px,5cqw,30px) 0 clamp(18px,5cqw,28px); display:flex; align-items:center; gap:.7em;
+    font-size:clamp(13px,2.8cqw,16px); opacity:0; animation:rise .8s ease-out .66s forwards; }
+  .foot .k { color:var(--sky-deep); font-weight:800; }
+  .foot .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; background:#fff; color:var(--sky-deep);
+    border:2px solid #BcdCEF; border-radius:8px; padding:3px 11px; font-weight:700; }
+
+  /* 底部球场 + 球网带 */
+  .court-band { position:relative; z-index:2; margin:0 calc(-1 * clamp(20px,6cqw,38px));
+    height:clamp(74px,19cqw,128px); overflow:hidden;
+    background:linear-gradient(180deg, var(--court) 0%, var(--court-deep) 100%); }
+  .court-band::before { content:""; position:absolute; left:0; right:0; bottom:0; height:78%;
+    border-top:2px solid rgba(255,255,255,.85);
+    background:
+      linear-gradient(90deg, rgba(255,255,255,.85) 0 2px, transparent 2px) left/100% 100% no-repeat,
+      linear-gradient(90deg, transparent calc(100% - 2px), rgba(255,255,255,.85) calc(100% - 2px)) right/100% 100% no-repeat;
+    transform:perspective(120px) rotateX(34deg); transform-origin:bottom; }
+  .court-band .center { position:absolute; left:50%; top:0; bottom:0; width:2px; background:rgba(255,255,255,.7); }
+  .net { position:absolute; left:50%; top:0; bottom:0; width:clamp(40px,12cqw,80px); transform:translateX(-50%);
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(0deg,  rgba(255,255,255,.55) 0 1px, transparent 1px 7px);
+    border-left:2px solid #fff; border-right:2px solid #fff; }
+  .net::before { content:""; position:absolute; left:-2px; right:-2px; top:0; height:clamp(5px,1.6cqw,9px); background:#fff; border-radius:2px; }
+
+  @keyframes rise { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important}
+    .kicker,.title-cn,.title-en,.slogan,.sub,.tags,.foot{opacity:1!important}
+    .b1{transform:translate(80cqw,-9cqw)} .b2{transform:translate(5cqw,-7cqw)} }
 </style>
 </head>
 <body>
   <div class="poster">
+    <div class="rays" aria-hidden="true"></div>
     <div class="sun" aria-hidden="true"></div>
-    <div class="court" aria-hidden="true">
-      <span class="birdie b1">🏸</span>
-      <span class="birdie b2">🏸</span>
-    </div>
+    <svg class="birdie b1" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="44" r="8" fill="#FFD23F" stroke="#fff" stroke-width="2"/>
+      <g fill="#fff" stroke="currentColor" stroke-width="1.5">
+        <path d="M32 40 L18 8 L28 36 Z"/><path d="M32 40 L32 4 L36 38 Z"/><path d="M32 40 L46 8 L36 36 Z"/>
+      </g>
+    </svg>
+    <svg class="birdie b2" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="44" r="8" fill="#fff" stroke="#2176B6" stroke-width="2"/>
+      <g fill="#EAF6FF" stroke="currentColor" stroke-width="1.5">
+        <path d="M32 40 L18 8 L28 36 Z"/><path d="M32 40 L32 4 L36 38 Z"/><path d="M32 40 L46 8 L36 36 Z"/>
+      </g>
+    </svg>
+
     <div class="inner">
-      <span class="kicker">WFLA BADMINTON CLUB</span>
+      <span class="kicker">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="46" r="9" fill="#fff"/><g fill="#fff"><path d="M32 42 L18 6 L28 38 Z"/><path d="M32 42 L32 2 L36 40 Z"/><path d="M32 42 L46 6 L36 38 Z"/></g></svg>
+        WFLA BADMINTON CLUB
+      </span>
       <h1>
         <span class="title-cn">轻羽飞扬</span>
         <span class="title-en">青春 · 阳光 · 羽你同行</span>
       </h1>
       <p class="slogan">以羽相会，<span>聚力同行</span></p>
       <p class="sub">于运动之中，传递每一份暖意。</p>
-
       <div class="tags">
         <span class="tag">热忱</span>
         <span class="tag alt">竞技</span>
         <span class="tag">向善</span>
         <span class="tag alt">青春</span>
       </div>
-
       <div class="foot">
         <span class="k">社长微信</span>
         <span class="mono">yyq-100616</span>
       </div>
+    </div>
+
+    <div class="court-band" aria-hidden="true">
+      <span class="center"></span>
+      <span class="net"></span>
     </div>
   </div>
 </body>
