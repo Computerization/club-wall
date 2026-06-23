@@ -106,6 +106,7 @@ export const clubs: Club[] = [
   { id: "74", name: "食品研究社", category: "Academic", shortDesc: "Food Science", tags: ["美食", "健康", "食品安全", "食品化学"], description: "我们欢迎任何对食品感兴趣的同学，组件世外老吃家天堂。社长微信号：enehaodeo", image: "/covers/b11.jpg", posters: ["/posters/f67-1.jpg"], qrcodes: ["/qrcodes/f67-1.png"], posterHtml: "", contact: "" },
   { id: "76", name: "WFLA数学社", category: "Academic", shortDesc: "Math", tags: ["数学", "思维", "竞赛", "钻研"], description: "数学基础和竞赛水平并不是玩转数学的必要条件；只要你对数学保有好奇和热情，WFLA数学社都欢迎你的加入！无论是讨论竞赛技巧与趣味题目，亦或探索高等数学和深层理论，这里都有你的一席之地！", image: "/covers/b5.jpg", posters: ["/posters/b5-1.jpg"], qrcodes: [], posterHtml: "", contact: "" },
   { id: "77", name: "生物社", category: "Academic", shortDesc: "Biology", tags: ["生命", "实验", "观察", "探究"], description: "从细胞到生态，一起探索生命科学的奇妙。", image: "/covers/f54.jpg", posters: ["/posters/f54-1.jpg"], qrcodes: ["/qrcodes/f54-1.png"], posterHtml: "", contact: "" },
+  { id: "79", name: "管弦乐团", category: "Arts", shortDesc: "Orchestra", tags: ["古典乐", "合奏", "舞台"], description: "用琴弦与管乐，奏响校园最动人的旋律。", image: "/covers/b12.jpg", posters: ["/posters/b12-1.jpg"], qrcodes: ["/qrcodes/b12-1.png"], posterHtml: "", contact: "" },
   // ClubsToBeEstablished
   { id: "78", name: "阈限空间 Negative Space Design", category: "ClubsToBeEstablished", shortDesc: "Design", tags: ["创造", "平等", "改变世界"], description: "该社团旨在激发观察力与打破现实的能力，培养在看到世界的不完美时，愿意去改变些什么的人。", image: "/covers/f62.jpg", posters: ["/posters/f62-1.jpg"], qrcodes: ["/qrcodes/f62-1.png"], posterHtml: "", contact: "" },
 ];
