@@ -48,7 +48,7 @@ export const categoryMeta: Record<Category, CategoryMeta> = {
   },
   ClubsToBeEstablished: {
     en: 'Forming',
-    cn: '即将成立',
+    cn: '待成立',
     tagline: 'The next chapter, written by you.',
     accent: '#d8b46a',
   },

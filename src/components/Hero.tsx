@@ -34,7 +34,8 @@ export default function Hero({ clubCount, categoryCount }: HeroProps) {
 
       {/* Stats */}
       <div className="mt-10 flex animate-fade-up delay-500 items-center gap-8 sm:gap-12">
-        <Stat value={`${clubCount}+`} label="社团 Clubs" />
+        {/* Round down to a clean marketing figure (e.g. 73 clubs → "70+"). */}
+        <Stat value={`${Math.floor(clubCount / 10) * 10}+`} label="社团 Clubs" />
         <div className="h-10 w-px bg-white/15" />
         <Stat value={`${categoryCount}`} label="领域 Categories" />
         <div className="h-10 w-px bg-white/15" />

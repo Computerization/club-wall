@@ -11,6 +11,14 @@ interface HeaderProps {
 }
 
 export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, minimal = false }: HeaderProps) {
+  // Under HashRouter the URL hash is owned by the router, so a native
+  // `href="#cat-X"` anchor would be read as a route instead of scrolling.
+  // Scroll to the section ourselves and leave the route untouched.
+  const jumpToCategory = (e: React.MouseEvent, cat: string) => {
+    e.preventDefault();
+    document.getElementById(`cat-${cat}`)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <header className="glass sticky top-0 z-50 border-b border-white/10">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-3 sm:px-6">
@@ -33,6 +41,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
                 <a
                   key={cat}
                   href={`#cat-${cat}`}
+                  onClick={(e) => jumpToCategory(e, cat)}
                   className="group relative whitespace-nowrap rounded-full px-3 py-1.5 text-sm text-white/65 transition-colors hover:text-white"
                 >
                   {meta.en}
