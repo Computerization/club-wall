@@ -1,6 +1,9 @@
 import { Search } from 'lucide-react';
-import { categories } from '../data/clubs';
+import { Link } from 'react-router-dom';
+import { categories, clubs } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+
+const computerizationClub = clubs.find((club) => club.name.includes('信息化'));
 
 interface HeaderProps {
   searchQuery: string;
@@ -23,14 +26,24 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
     <header className="glass sticky top-0 z-50 border-b border-white/10">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-3 sm:px-6">
         {/* Wordmark */}
-        <a href="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light/15 ring-1 ring-brand-light/40">
-            <span className="font-display text-lg font-bold text-brand-light">C</span>
-          </span>
-          <span className="hidden font-display text-lg font-semibold tracking-tight text-white sm:block">
-            Club Wall
-          </span>
-        </a>
+        <div className="flex shrink-0 items-center gap-2">
+          <a href="/" className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light/15 ring-1 ring-brand-light/40">
+              <span className="font-display text-lg font-bold text-brand-light">C</span>
+            </span>
+            <span className="hidden font-display text-lg font-semibold tracking-tight text-white sm:block">
+              Club Wall
+            </span>
+          </a>
+          {computerizationClub && (
+            <Link
+              to={`/club/${computerizationClub.id}`}
+              className="hidden text-xs text-white/35 transition-colors hover:text-brand-light sm:block"
+            >
+              by Computerization
+            </Link>
+          )}
+        </div>
 
         {/* Category jump-rail */}
         {!minimal && (
