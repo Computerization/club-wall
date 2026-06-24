@@ -25,9 +25,12 @@ interface CategorySectionProps {
   onClubClick: (id: string) => void;
   rowIndex?: number;
   disableAutoScroll?: boolean;
+  /** Render as a wrapping responsive grid that tiles downward instead of a
+   *  horizontal marquee. Disables all scroll/auto-scroll machinery. */
+  tiled?: boolean;
 }
 
-export default function CategorySection({ category, clubs, onClubClick, rowIndex = 0, disableAutoScroll = false }: CategorySectionProps) {
+export default function CategorySection({ category, clubs, onClubClick, rowIndex = 0, disableAutoScroll = false, tiled = false }: CategorySectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // Card dimensions drive both the rendered tile size and the seamless-loop
   // math, so they're a single reactive source shrunk on narrow phones.
@@ -77,7 +80,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   // Initialize the scroll position + run the auto-scroll animation (unless disabled).
   useEffect(() => {
-    if (clubs.length === 0 || disableAutoScroll) return;
+    if (clubs.length === 0 || disableAutoScroll || tiled) return;
 
     if (containerRef.current) {
       containerRef.current.scrollLeft = middleStart;
@@ -104,7 +107,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
-  }, [direction, clubs.length, middleStart, setWidth, middleEnd, disableAutoScroll]);
+  }, [direction, clubs.length, middleStart, setWidth, middleEnd, disableAutoScroll, tiled]);
 
   // Snap back across the seam when the user scrolls past a copy boundary.
   const handleScroll = useCallback(() => {
@@ -237,7 +240,19 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
         />
       </div>
 
-      {/* Marquee */}
+      {/* Tiled grid: cards wrap and stack downward, no scrolling. */}
+      {tiled ? (
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+            {clubs.map((club) => (
+              <div key={club.id} className="aspect-square">
+                <GalleryCard club={club} onClick={onClubClick} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+      /* Marquee */
       <div className="relative">
         <button
           onClick={() => scrollByOne('left')}
@@ -300,6 +315,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
+      )}
     </section>
   );
 }

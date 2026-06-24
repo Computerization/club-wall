@@ -1,15 +1,19 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Shuffle } from 'lucide-react';
 
 interface HeroProps {
   clubCount: number;
   categoryCount: number;
+  /** Opens a randomly chosen club in the preview modal. */
+  onRandomClub: () => void;
+  /** Hide the random button — the easter egg has taken it away. */
+  hideRandom?: boolean;
 }
 
 /**
  * Full-viewport, editorial opening for the wall. Sets the tone — immersive,
  * premium, alive — before the gallery rows begin.
  */
-export default function Hero({ clubCount, categoryCount }: HeroProps) {
+export default function Hero({ clubCount, categoryCount, onRandomClub, hideRandom = false }: HeroProps) {
   return (
     <section className="relative flex min-h-[88vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       {/* Floating ambient orbs */}
@@ -41,6 +45,20 @@ export default function Hero({ clubCount, categoryCount }: HeroProps) {
         <div className="h-10 w-px bg-white/15" />
         <Stat value="∞" label="可能 Possibilities" />
       </div>
+
+      {/* Actions */}
+      {!hideRandom && (
+        <div className="mt-10 flex animate-fade-up delay-500 flex-wrap items-center justify-center gap-3">
+          <button
+            onClick={onRandomClub}
+            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900
+                       shadow-lg transition-all duration-300 hover:scale-105 hover:bg-brand-light hover:text-white"
+          >
+            <Shuffle className="h-4 w-4" />
+            <span>随机社团 Surprise Me</span>
+          </button>
+        </div>
+      )}
 
       {/* Scroll cue */}
       <div className="absolute bottom-8 flex flex-col items-center gap-2 text-white/40 animate-pulse-soft">
