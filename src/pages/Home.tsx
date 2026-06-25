@@ -6,6 +6,7 @@ import Hero from '../components/Hero';
 import CategorySection from '../components/CategorySection';
 import ClubList from '../components/ClubList';
 import ClubPreviewModal from '../components/ClubPreviewModal';
+import UpcomingActivities from '../components/UpcomingActivities';
 import { useClubNavigation } from '../hooks/useClub';
 import { categories, clubs } from '../data/clubs';
 import type { Club } from '../data/clubs';
@@ -218,6 +219,8 @@ export default function Home() {
               onRandomClub={openRandomClub}
               hideRandom={eggActive}
             />
+
+            <UpcomingActivities />
 
             {orderedCategories.map((category, index) => {
               const categoryClubs = clubs.filter((club) => club.category === category);
