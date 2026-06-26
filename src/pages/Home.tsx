@@ -244,7 +244,7 @@ export default function Home() {
                 category="ClubsToBeEstablished"
                 clubs={pendingClubs}
                 onClubClick={openPreview}
-                disableAutoScroll
+                rowIndex={0}
                 tiled={tiled}
               />
             )}
