@@ -28,8 +28,15 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
         {/* Wordmark */}
         <div className="flex shrink-0 items-center gap-2">
           <a href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light/15 ring-1 ring-brand-light/40">
-              <span className="font-display text-lg font-bold text-brand-light">C</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg ring-1"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--theme-light) 15%, transparent)',
+                borderColor: 'color-mix(in srgb, var(--theme-light) 40%, transparent)',
+                boxShadow: '0 0 0 1px color-mix(in srgb, var(--theme-light) 40%, transparent)',
+                transition: 'background-color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease',
+              }}
+            >
+              <span className="font-display text-lg font-bold" style={{ color: 'var(--theme-light)', transition: 'color 0.6s ease' }}>C</span>
             </span>
             <span className="hidden font-display text-lg font-semibold tracking-tight text-white sm:block">
               Club Wall

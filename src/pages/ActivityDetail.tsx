@@ -6,6 +6,7 @@ import { asset } from '../data/clubs';
 import { activities } from '../data/activities';
 import { clubs } from '../data/clubs';
 import type { Activity } from '../data/activities';
+import ActivityDetailHTML from './ActivityDetailHTML';
 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
@@ -98,6 +99,10 @@ export default function ActivityDetail() {
   const { id } = useParams<{ id: string }>();
   const activity = activities.find((a) => a.id === id);
   const club = activity ? clubs.find((c) => c.id === activity.clubId) : undefined;
+
+  if (activity?.detailType === 'html') {
+    return <ActivityDetailHTML activity={activity} />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

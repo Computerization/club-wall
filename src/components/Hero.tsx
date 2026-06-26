@@ -17,10 +17,16 @@ export default function Hero({ clubCount, categoryCount, onRandomClub, hideRando
   return (
     <section className="relative flex min-h-[88vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       {/* Floating ambient orbs */}
-      <div className="pointer-events-none absolute left-[8%] top-[18%] h-72 w-72 rounded-full bg-brand-glow/20 blur-3xl animate-float" />
-      <div className="pointer-events-none absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full bg-brand/30 blur-3xl animate-float delay-300" />
+      <div
+        className="pointer-events-none absolute left-[8%] top-[18%] h-72 w-72 rounded-full blur-3xl animate-float"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--theme-light) 20%, transparent)', transition: 'background-color 0.8s ease' }}
+      />
+      <div
+        className="pointer-events-none absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full blur-3xl animate-float delay-300"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--theme) 30%, transparent)', transition: 'background-color 0.8s ease' }}
+      />
 
-      <p className="eyebrow mb-6 animate-fade-up text-xs font-medium text-brand-light">
+      <p className="eyebrow mb-6 animate-fade-up text-xs font-medium" style={{ color: 'var(--theme-light)', transition: 'color 0.6s ease' }}>
         WFLA · 2026 招新季 Club Recruitment
       </p>
 
@@ -52,7 +58,13 @@ export default function Hero({ clubCount, categoryCount, onRandomClub, hideRando
           <button
             onClick={onRandomClub}
             className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900
-                       shadow-lg transition-all duration-300 hover:scale-105 hover:bg-brand-light hover:text-white"
+                       shadow-lg transition-all duration-300 hover:scale-105 hover:text-white"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--theme-light)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'white';
+            }}
           >
             <Shuffle className="h-4 w-4" />
             <span>随机社团 Surprise Me</span>

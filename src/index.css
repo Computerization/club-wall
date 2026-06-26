@@ -1,5 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:wght@500;600;700;800&display=swap');
 
+/* Register custom properties as <color> so the browser can interpolate them
+   smoothly — even inside gradient functions like radial-gradient() and
+   linear-gradient(). Without @property, CSS transitions on gradients are
+   instant; with it, they animate at sub-pixel precision. */
+@property --theme-light {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2dd4a7;
+}
+@property --theme {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1A5F4A;
+}
+@property --theme-dark {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f3d2f;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,6 +27,9 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --theme-light: #2dd4a7;
+    --theme: #1A5F4A;
+    --theme-dark: #0f3d2f;
   }
 
   html {
@@ -17,18 +40,17 @@
     font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
     color: #e8efe9;
     background-color: #070b09;
-    /* Layered ambient glow for an immersive, "gallery hall" feel */
     background-image:
-      radial-gradient(1200px 600px at 15% -10%, rgba(45, 212, 167, 0.14), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(26, 95, 74, 0.22), transparent 55%),
-      radial-gradient(1000px 700px at 50% 120%, rgba(45, 212, 167, 0.08), transparent 60%);
+      radial-gradient(1200px 600px at 15% -10%, color-mix(in srgb, var(--theme-light) 14%, transparent), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, color-mix(in srgb, var(--theme) 22%, transparent), transparent 55%),
+      radial-gradient(1000px 700px at 50% 120%, color-mix(in srgb, var(--theme-light) 8%, transparent), transparent 60%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background: rgba(45, 212, 167, 0.3);
+    background: color-mix(in srgb, var(--theme-light) 30%, transparent);
     color: #fff;
   }
 }
@@ -78,10 +100,11 @@
   }
 
   .text-gradient {
-    background: linear-gradient(120deg, #ffffff 0%, #b6f0dc 45%, #2dd4a7 100%);
+    background: linear-gradient(120deg, #ffffff 0%, #b6f0dc 45%, var(--theme-light) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    transition: --theme-light 0.6s ease;
   }
 }
 
@@ -114,10 +137,11 @@
   background: #070b09;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(#1A5F4A, #0f3d2f);
+  background: linear-gradient(var(--theme), var(--theme-dark));
   border-radius: 999px;
   border: 2px solid #070b09;
+  transition: --theme 0.6s ease, --theme-dark 0.6s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(#2dd4a7, #1A5F4A);
+  background: linear-gradient(var(--theme-light), var(--theme));
 }

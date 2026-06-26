@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { asset } from '../data/clubs';
 import { activities } from '../data/activities';
 import type { Activity } from '../data/activities';
+import useActivityTheme from '../hooks/useActivityTheme';
 
 const AUTO_INTERVAL = 5000;
 
@@ -15,6 +16,7 @@ function ActivitySlide({
   onClick: (id: string) => void;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -32,10 +34,17 @@ function ActivitySlide({
   return (
     <button
       onClick={() => onClick(activity.id)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="group relative w-full shrink-0 cursor-pointer overflow-hidden rounded-2xl text-left
-                 ring-1 ring-white/10 shadow-lift transition-shadow duration-300 hover:shadow-glow
-                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-      style={{ aspectRatio: '16 / 9' }}
+                 ring-1 ring-white/10 transition-shadow duration-300
+                 focus-visible:outline-none focus-visible:ring-2"
+      style={{
+        aspectRatio: '16 / 9',
+        boxShadow: hovered
+          ? `0 0 32px ${activity.color}44`
+          : '0 30px 70px -25px rgba(0,0,0,0.85)',
+      } as React.CSSProperties}
       aria-label={`查看活动：${activity.title}`}
     >
       {/* Placeholder shimmer */}
@@ -64,7 +73,10 @@ function ActivitySlide({
         <p className="mt-1.5 line-clamp-2 text-sm text-white/70 sm:text-base">
           {activity.shortDesc}
         </p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-brand/60 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+        <span
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm"
+          style={{ backgroundColor: `${activity.color}99` }}
+        >
           <Clock className="h-3 w-3" />
           {activity.clubName}
         </span>
@@ -79,7 +91,11 @@ export default function UpcomingActivities() {
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const total = activities.length;
+
+  const currentActivity = activities[current];
+  useActivityTheme(currentActivity, sectionRef);
 
   const goTo = useCallback(
     (index: number) => {
@@ -133,11 +149,11 @@ export default function UpcomingActivities() {
   if (total === 0) return null;
 
   return (
-    <section className="py-14">
+    <section ref={sectionRef} className="py-14">
       {/* Section header */}
       <div className="mx-auto mb-6 flex max-w-7xl items-end justify-between px-6">
         <div>
-          <span className="eyebrow text-[11px] font-semibold text-brand-light">
+          <span className="eyebrow text-[11px] font-semibold" style={{ color: 'var(--theme-light)', transition: 'color 0.6s ease' }}>
             活动 · {String(total).padStart(2, '0')}
           </span>
           <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
@@ -145,7 +161,7 @@ export default function UpcomingActivities() {
           </h2>
           <p className="mt-1 text-sm text-white/45">近期即将举行的社团活动</p>
         </div>
-        <span className="hidden h-12 w-1 rounded-full sm:block bg-gradient-to-b from-brand-light to-transparent" />
+        <span className="hidden h-12 w-1 rounded-full sm:block" style={{ background: 'linear-gradient(var(--theme-light), transparent)', transition: '--theme-light 0.6s ease' }} />
       </div>
 
       {/* Carousel */}
@@ -198,15 +214,16 @@ export default function UpcomingActivities() {
 
         {/* Dots */}
         <div className="mt-5 flex items-center justify-center gap-2">
-          {activities.map((_, index) => (
+          {activities.map((activity, index) => (
             <button
-              key={index}
+              key={activity.id}
               onClick={() => goTo(index)}
-              className={`rounded-full transition-all duration-300 ${
+              className="rounded-full transition-all duration-300"
+              style={
                 index === current
-                  ? 'h-2.5 w-8 bg-brand-light'
-                  : 'h-2.5 w-2.5 bg-white/25 hover:bg-white/50'
-              }`}
+                  ? { height: 10, width: 32, backgroundColor: activity.color }
+                  : { height: 10, width: 10, backgroundColor: 'rgba(255,255,255,0.25)' }
+              }
               aria-label={`跳转到第 ${index + 1} 张`}
             />
           ))}
