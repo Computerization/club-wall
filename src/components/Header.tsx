@@ -1,7 +1,9 @@
+import { useState, useRef, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { categories, clubs } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+import ClubDropdown from './ClubDropdown';
 
 const computerizationClub = clubs.find((club) => club.name.includes('信息化'));
 
@@ -11,9 +13,29 @@ interface HeaderProps {
   onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   /** When true, hides the category jump-rail (e.g. on search/detail views). */
   minimal?: boolean;
+  onClubClick?: (id: string) => void;
 }
 
-export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, minimal = false }: HeaderProps) {
+export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, minimal = false, onClubClick }: HeaderProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [dropdownOpen]);
+
+  const handleClubClick = (id: string) => {
+    setDropdownOpen(false);
+    onClubClick?.(id);
+  };
+
   // Under HashRouter the URL hash is owned by the router, so a native
   // `href="#cat-X"` anchor would be read as a route instead of scrolling.
   // Scroll to the section ourselves and leave the route untouched.
@@ -76,18 +98,25 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
         )}
 
         {/* Search */}
-        <div className={`relative ${minimal ? 'ml-auto w-full max-w-md' : 'ml-auto w-44 sm:w-64'}`}>
+        <div ref={containerRef} className={`relative ${minimal ? 'ml-auto w-full max-w-md' : 'ml-auto w-44 sm:w-64'}`}>
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/45" size={16} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            onKeyDown={onSearchKeyDown}
+            onFocus={() => setDropdownOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setDropdownOpen(false);
+              onSearchKeyDown?.(e);
+            }}
             placeholder="搜索社团…"
             className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-9 pr-4 text-sm text-white
                        placeholder-white/40 outline-none transition-all duration-200
                        focus:border-brand-light/50 focus:bg-white/10 focus:ring-2 focus:ring-brand-light/20"
           />
+          {dropdownOpen && onClubClick && searchQuery.length === 0 && (
+            <ClubDropdown clubs={clubs} onClubClick={handleClubClick} />
+          )}
         </div>
       </div>
     </header>

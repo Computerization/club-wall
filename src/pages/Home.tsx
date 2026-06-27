@@ -183,6 +183,7 @@ export default function Home() {
         onSearchChange={setInputValue}
         onSearchKeyDown={handleSearchKeyDown}
         minimal={isSearching}
+        onClubClick={openPreview}
       />
 
       <main className="flex-1">
