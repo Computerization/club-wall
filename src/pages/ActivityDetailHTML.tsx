@@ -114,28 +114,31 @@ export default function ActivityDetailHTML(_props: Props) {
 
     const onUserScroll = () => { userScrolled.current = true; };
     el.addEventListener('wheel', onUserScroll, { passive: true });
+    el.addEventListener('touchmove', onUserScroll, { passive: true });
 
     const timer = setTimeout(() => {
       if (userScrolled.current || (el.scrollTop > 5)) return;
-      const speed = 6; // px per frame
+      const speed = 10;
 
-      const tick = () => {
-        if (userScrolled.current) return;
+      const id = window.setInterval(() => {
+        if (userScrolled.current) { clearInterval(id); return; }
         const el = scrollRef.current;
-        if (!el) return;
+        if (!el) { clearInterval(id); return; }
         autoRef.current = true;
         el.scrollTop += speed;
         autoRef.current = false;
-        if (el.scrollTop >= el.scrollHeight - el.clientHeight - 2) return;
-        autoRaf.current = requestAnimationFrame(tick);
-      };
-      autoRaf.current = requestAnimationFrame(tick);
+        if (el.scrollTop >= el.scrollHeight - el.clientHeight - 2) {
+          clearInterval(id);
+        }
+      }, 16);
+      autoRaf.current = id;
     }, 500);
 
     return () => {
       el.removeEventListener('wheel', onUserScroll);
+      el.removeEventListener('touchmove', onUserScroll);
       clearTimeout(timer);
-      cancelAnimationFrame(autoRaf.current);
+      clearInterval(autoRaf.current);
     };
   }, []);
 
@@ -145,6 +148,8 @@ export default function ActivityDetailHTML(_props: Props) {
   }, [navigate]);
 
   const scrollToBottom = useCallback(() => {
+    userScrolled.current = true;
+    clearInterval(autoRaf.current);
     const el = scrollRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
