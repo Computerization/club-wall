@@ -14,7 +14,7 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
 
-const SCROLL = 13000;
+const SCROLL = 4000;
 const ITEMS = ['表演', '道具', '灯光', '音效', '宣发美术', '妆造', '等等……'];
 
 type Segment = { text: string; red?: boolean };
@@ -47,6 +47,9 @@ export default function ActivityDetailHTML(_props: Props) {
   const navigate = useNavigate();
   const [st, setSt] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const autoRef = useRef(false);
+  const autoRaf = useRef(0);
+  const userScrolled = useRef(false);
   const [scale, setScale] = useState(1);
   const [page2Boost, setPage2Boost] = useState(1);
   const [page4Boost, setPage4Boost] = useState(1);
@@ -70,6 +73,7 @@ export default function ActivityDetailHTML(_props: Props) {
     if (saved && scrollRef.current) {
       scrollRef.current.scrollTop = Number(saved);
       sessionStorage.removeItem(SCROLL_KEY);
+      userScrolled.current = true;
     }
   }, []);
 
@@ -102,6 +106,39 @@ export default function ActivityDetailHTML(_props: Props) {
 
   const onScroll = useCallback(() => {
     setSt(scrollRef.current?.scrollTop ?? 0);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onUserScroll = () => { userScrolled.current = true; };
+    el.addEventListener('wheel', onUserScroll, { passive: true });
+    el.addEventListener('touchstart', onUserScroll, { passive: true });
+
+    const timer = setTimeout(() => {
+      if (userScrolled.current || (el.scrollTop > 5)) return;
+      const speed = 3.75; // px per frame
+
+      const tick = () => {
+        if (userScrolled.current) return;
+        const el = scrollRef.current;
+        if (!el) return;
+        autoRef.current = true;
+        el.scrollTop += speed;
+        autoRef.current = false;
+        if (el.scrollTop >= el.scrollHeight - el.clientHeight - 2) return;
+        autoRaf.current = requestAnimationFrame(tick);
+      };
+      autoRaf.current = requestAnimationFrame(tick);
+    }, 500);
+
+    return () => {
+      el.removeEventListener('wheel', onUserScroll);
+      el.removeEventListener('touchstart', onUserScroll);
+      clearTimeout(timer);
+      cancelAnimationFrame(autoRaf.current);
+    };
   }, []);
 
   const goToClub = useCallback(() => {
@@ -173,7 +210,7 @@ export default function ActivityDetailHTML(_props: Props) {
         }}
       >
       <style>{`@font-face{font-family:STZhongsong;src:url(${asset('/fonts/stzhongsong.ttf')}) format('truetype');font-weight:normal;font-style:normal;font-display:swap;}`}</style>
-      <div style={{ height: SCROLL }} />
+      <div style={{ height: `calc(${SCROLL}px + 100vh)` }} />
 
       <div
         className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center px-6"
