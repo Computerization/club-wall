@@ -114,11 +114,10 @@ export default function ActivityDetailHTML(_props: Props) {
 
     const onUserScroll = () => { userScrolled.current = true; };
     el.addEventListener('wheel', onUserScroll, { passive: true });
-    el.addEventListener('touchstart', onUserScroll, { passive: true });
 
     const timer = setTimeout(() => {
       if (userScrolled.current || (el.scrollTop > 5)) return;
-      const speed = 3.75; // px per frame
+      const speed = 6; // px per frame
 
       const tick = () => {
         if (userScrolled.current) return;
@@ -135,7 +134,6 @@ export default function ActivityDetailHTML(_props: Props) {
 
     return () => {
       el.removeEventListener('wheel', onUserScroll);
-      el.removeEventListener('touchstart', onUserScroll);
       clearTimeout(timer);
       cancelAnimationFrame(autoRaf.current);
     };
@@ -206,7 +204,8 @@ export default function ActivityDetailHTML(_props: Props) {
         onScroll={onScroll}
         style={{
           fontFamily: '"STZhongsong", "华文中宋", serif',
-          animation: 'page-fade-in 0.6s ease both',
+          overscrollBehavior: 'none',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
       <style>{`@font-face{font-family:STZhongsong;src:url(${asset('/fonts/stzhongsong.ttf')}) format('truetype');font-weight:normal;font-style:normal;font-display:swap;}`}</style>
