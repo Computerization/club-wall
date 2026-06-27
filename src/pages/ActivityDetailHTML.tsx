@@ -2,18 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { Activity } from '../data/activities';
+import { asset } from '../data/clubs';
 
 const SCROLL_KEY = 'activity-scroll';
-
-const fontFace = `
-@font-face {
-  font-family: 'STZhongsong';
-  src: url('/fonts/stzhongsong.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-`;
 
 interface Props {
   activity: Activity;
@@ -89,7 +80,7 @@ export default function ActivityDetailHTML(_props: Props) {
     const prevHref = link.href;
     const prevType = link.type;
     link.type = 'image/jpeg';
-    link.href = '/covers/kaleido-logo.jpg';
+    link.href = asset('/covers/kaleido-logo.jpg');
     return () => {
       link.href = prevHref;
       link.type = prevType;
@@ -181,7 +172,7 @@ export default function ActivityDetailHTML(_props: Props) {
           animation: 'page-fade-in 0.6s ease both',
         }}
       >
-      <style>{fontFace}</style>
+      <style>{`@font-face{font-family:STZhongsong;src:url(${asset('/fonts/stzhongsong.ttf')}) format('truetype');font-weight:normal;font-style:normal;font-display:swap;}`}</style>
       <div style={{ height: SCROLL }} />
 
       <div
@@ -315,7 +306,7 @@ export default function ActivityDetailHTML(_props: Props) {
             </div>
             <div className="flex flex-row items-start gap-4 md:flex-col md:items-center">
               <img
-                src="/qrcodes/kaleido.jpg"
+                src={asset('/qrcodes/kaleido.jpg')}
                 alt="Kaleido QR"
                 className="flex-shrink-0 rounded-2xl"
                 style={{
@@ -340,7 +331,7 @@ export default function ActivityDetailHTML(_props: Props) {
                 }}
               >
                 <img
-                  src="/covers/f41.jpg"
+                  src={asset('/covers/f41.jpg')}
                   alt="Kaleido 万华境戏剧社"
                   className="h-32 w-48 rounded-t-2xl object-cover"
                 />
