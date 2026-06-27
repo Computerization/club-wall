@@ -244,7 +244,7 @@ export default function Home() {
                 category="ClubsToBeEstablished"
                 clubs={pendingClubs}
                 onClubClick={openPreview}
-                rowIndex={0}
+                rowIndex={1}
                 tiled={tiled}
               />
             )}
