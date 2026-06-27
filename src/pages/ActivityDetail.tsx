@@ -8,11 +8,12 @@ import { clubs } from '../data/clubs';
 import type { Activity } from '../data/activities';
 import ActivityDetailHTML from './ActivityDetailHTML';
 
-function BackButton({ onClick }: { onClick: () => void }) {
+function BackButton({ onClick, color }: { onClick: () => void; color: string }) {
   return (
     <button
       onClick={onClick}
-      className="mb-8 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white"
+      className="mb-8 inline-flex items-center gap-2 text-sm transition-colors hover:text-white"
+      style={{ color }}
     >
       <ArrowLeft className="h-4 w-4" />
       <span className="font-medium">返回 Back</span>
@@ -63,13 +64,23 @@ function InfoCard({
   icon,
   label,
   children,
+  color,
 }: {
   icon: React.ReactNode;
   label: string;
   children: React.ReactNode;
+  color: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-5 transition-shadow duration-300 hover:shadow-glow">
+    <div
+      className="glass rounded-2xl p-5 transition-shadow duration-300"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = `0 0 32px ${color}44`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '';
+      }}
+    >
       <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/50">
         {icon}
         {label}
@@ -104,11 +115,27 @@ export default function ActivityDetail() {
     return <ActivityDetailHTML activity={activity} />;
   }
 
+  const color = activity?.color ?? '#2dd4a7';
+
+  // Theme scrollbar to activity colour
+  useEffect(() => {
+    if (!activity) return;
+    const root = document.documentElement;
+    root.style.setProperty('--theme-light', color);
+    root.style.setProperty('--theme', color);
+    root.style.setProperty('--theme-dark', color);
+    return () => {
+      root.style.setProperty('--theme-light', '#2dd4a7');
+      root.style.setProperty('--theme', '#1A5F4A');
+      root.style.setProperty('--theme-dark', '#0f3d2f');
+    };
+  }, [activity, color]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 px-6 py-10">
         <div className="mx-auto max-w-4xl">
-          <BackButton onClick={() => navigate('/')} />
+          <BackButton onClick={() => navigate('/')} color={color} />
           {activity ? (
             <div className="animate-fade-up">
               <ActivityHeader activity={activity} />
@@ -116,13 +143,14 @@ export default function ActivityDetail() {
               {/* Three-column info layout — stacked on mobile, side-by-side on desktop */}
               <div className="mt-10 grid gap-6 md:grid-cols-3">
                 {/* a) Basic info */}
-                <InfoCard icon={<Calendar className="h-3.5 w-3.5" />} label="基本信息">
+                <InfoCard icon={<Calendar className="h-3.5 w-3.5" />} label="基本信息" color={color}>
                   <div className="space-y-3">
                     <div>
                       <span className="text-xs text-white/40">所属社团</span>
                       <button
                         onClick={() => club && navigate(`/club/${club.id}`)}
-                        className="mt-0.5 block text-base font-semibold text-brand-light transition-colors hover:text-white"
+                        className="mt-0.5 block text-base font-semibold transition-colors hover:text-white"
+                        style={{ color }}
                       >
                         {activity.clubName}
                       </button>
@@ -135,7 +163,7 @@ export default function ActivityDetail() {
                 </InfoCard>
 
                 {/* b) Details */}
-                <InfoCard icon={<Users className="h-3.5 w-3.5" />} label="活动详情">
+                <InfoCard icon={<Users className="h-3.5 w-3.5" />} label="活动详情" color={color}>
                   <div className="space-y-4">
                     <div>
                       <span className="text-xs text-white/40">活动简介</span>
@@ -153,7 +181,7 @@ export default function ActivityDetail() {
                 </InfoCard>
 
                 {/* c) Recruitment */}
-                <InfoCard icon={<QrCode className="h-3.5 w-3.5" />} label="招募联系">
+                <InfoCard icon={<QrCode className="h-3.5 w-3.5" />} label="招募联系" color={color}>
                   <div>
                     <span className="text-xs text-white/40">联系方式</span>
                     <pre className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-white/75 font-sans">

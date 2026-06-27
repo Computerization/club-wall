@@ -229,10 +229,17 @@ export default function UpcomingActivities() {
           ))}
         </div>
 
-        {/* Pause indicator */}
-        {isPaused && (
+        {isPaused && activities[current].id !== 'L1' && (
           <div className="absolute right-12 top-4 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm">
             已暂停
+          </div>
+        )}
+        {activities[current].id === 'L1' && (
+          <div
+            className="absolute right-12 top-4 z-10 rounded-full px-3 py-1 text-xs text-white backdrop-blur-sm"
+            style={{ backgroundColor: `${activities[current].color}cc` }}
+          >
+            招募中
           </div>
         )}
       </div>

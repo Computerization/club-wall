@@ -31,7 +31,7 @@ export const activities: Activity[] = [
     requirements:
       '1. 欢迎全校师生前来观演\n2. 请提前入场，演出期间保持安静\n3. 请勿使用闪光灯拍照\n4. 尊重演员及幕后工作人员\n5. 演出结束后设有演后谈环节',
     contact: '演出地点：校内剧场（具体日期将在后续通知）\nKaleido社团招新群：详见社团页面',
-    image: '/covers/f41.jpg',
+    image: '/covers/kaleido-activity.png',
     color: '#C00000',
     detailType: 'html',
   },

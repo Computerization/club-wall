@@ -82,6 +82,20 @@ export default function ActivityDetailHTML(_props: Props) {
     }
   }, []);
 
+  // Set Kaleido favicon for L1
+  useEffect(() => {
+    const link = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
+    if (!link) return;
+    const prevHref = link.href;
+    const prevType = link.type;
+    link.type = 'image/jpeg';
+    link.href = '/covers/kaleido-logo.jpg';
+    return () => {
+      link.href = prevHref;
+      link.type = prevType;
+    };
+  }, []);
+
   // Apply activity colour to scrollbar / theme variables
   useEffect(() => {
     const root = document.documentElement;
