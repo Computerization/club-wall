@@ -31,7 +31,7 @@ type Line = { segments: Segment[]; allRed?: boolean; large?: boolean };
 
 const RECRUIT_LINES: Line[] = [
   { segments: [{ text: '我们不设槛，无论是有' }, { text: '经验', red: true }, { text: '还是' }, { text: '零基础', red: true }, { text: '都欢迎尝试!' }] },
-  { segments: [{ text: '暑假里的排练活动会提供非常' }, { text: '充足', red: true }, { text: '的C/S时间，帮助大家减轻开学后的负担，' }] },
+  { segments: [{ text: '暑假里的排练活动会提供非常' }, { text: '充足', red: true }, { text: '的C/S时间，减轻大家开学后的负担，' }] },
   { segments: [{ text: '更快适应高中' }, { text: '新环境', red: true }, { text: '，交到志同道合的' }, { text: '新朋友', red: true }, { text: '!' }] },
   { segments: [{ text: '我们欢迎所有' }, { text: '热爱', red: true }, { text: '戏剧艺术的人，与我们在排练中度过' }, { text: '充实', red: true }, { text: '的暑假，' }] },
   { segments: [{ text: '在 Kaleido 大家庭中找到归属感' }], allRed: true, large: true },
@@ -44,7 +44,7 @@ const PAGE3_LINES: Line[] = [
   { segments: [
     { text: '请在' }, { text: '暑假前', red: true }, { text: '加社微信/招新意向群，我们在7月初就会开始建组，期待大家的到来!' },
   ] },
-  { segments: [{ text: '社长(周子涵)微信号:C115777SL' }] },
+  { segments: [{ text: '社长（周子涵）微信号：C115777SL' }] },
   { segments: [{ text: '请加社团招新群！（无槛，无负担！）' }] },
 ];
 
@@ -56,6 +56,22 @@ export default function ActivityDetailHTML(_props: Props) {
   const navigate = useNavigate();
   const [st, setSt] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [page2Boost, setPage2Boost] = useState(1);
+  const [page4Boost, setPage4Boost] = useState(1);
+
+  // Responsive scale: shrink on mobile, caps at 1 on desktop
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setScale(Math.min(1, w / 1400));
+      setPage2Boost(w < 768 ? 2 : 1);
+      setPage4Boost(w < 768 ? 2 : 1);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   // Restore scroll position on mount (e.g. after Back from club detail)
   useEffect(() => {
@@ -154,11 +170,14 @@ export default function ActivityDetailHTML(_props: Props) {
       <style>{fontFace}</style>
       <div style={{ height: SCROLL }} />
 
-      <div className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center px-6">
+      <div
+        className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center px-6"
+        style={{ transform: `scale(${scale})`, transformOrigin: 'center center' }}
+      >
 
-        {/* ==================== PAGE 1 ==================== */}
+        {/* ==================== PAGE 1: 标题 ==================== */}
         <h1
-          className="absolute text-center font-bold text-white"
+          className="absolute whitespace-nowrap text-center font-bold text-white"
           style={{
             fontSize: `${titleSize}rem`,
             opacity: s1opacity * page1opacity,
@@ -180,18 +199,24 @@ export default function ActivityDetailHTML(_props: Props) {
           </span>
         </h1>
 
+        {/* ==================== PAGE 2: 加入我们 + 条目 ==================== */}
         <div
           className="absolute flex flex-col items-center gap-5"
-          style={{ opacity: s2phase * page1opacity, transition: `opacity ${trans}` }}
+          style={{
+            opacity: s2phase * page1opacity,
+            transition: `opacity ${trans}`,
+            transform: `scale(${page2Boost})`,
+            transformOrigin: 'center center',
+          }}
         >
-          <h2 className="text-center font-bold text-white" style={{ fontSize: '3.25rem' }}>
+          <h2 className="whitespace-nowrap text-center font-bold text-white" style={{ fontSize: '3.25rem' }}>
             <span style={{ color: '#C00000' }}>加入</span>我们，你可以参与——
           </h2>
           <div className="flex flex-col items-center gap-4">
             {ITEMS.map((item, i) => (
               <span
                 key={item}
-                className="font-bold"
+                className="whitespace-nowrap font-bold"
                 style={{
                   fontSize: '3rem',
                   opacity: itemOpacities[i],
@@ -206,7 +231,7 @@ export default function ActivityDetailHTML(_props: Props) {
           </div>
         </div>
 
-        {/* ==================== PAGE 2 ==================== */}
+        {/* ==================== PAGE 3: 招募文案 ==================== */}
         <div
           className="absolute flex flex-col items-center gap-6 px-4"
           style={{ opacity: page2opacity * p2out, transition: `opacity ${trans}` }}
@@ -217,7 +242,7 @@ export default function ActivityDetailHTML(_props: Props) {
             return (
               <p
                 key={i}
-                className="text-center font-bold"
+                className="whitespace-nowrap text-center font-bold"
                 style={{
                   fontSize: isLarge ? '5.25rem' : '2.625rem',
                   opacity: recruitOpacities[i],
@@ -237,15 +262,20 @@ export default function ActivityDetailHTML(_props: Props) {
           })}
         </div>
 
-        {/* ==================== PAGE 3 ==================== */}
+        {/* ==================== PAGE 4: 报名方式 ==================== */}
         <div
           className="absolute flex flex-col items-center gap-5"
-          style={{ opacity: p3in, transition: `opacity ${trans}` }}
+          style={{
+            opacity: p3in,
+            transition: `opacity ${trans}`,
+            transform: `scale(${page4Boost})`,
+            transformOrigin: 'center center',
+          }}
         >
           <h3 className="text-center font-bold text-white" style={{ fontSize: '3rem' }}>
             报名方式：
           </h3>
-          <div className="flex flex-row items-start gap-10">
+          <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-10">
             <div className="flex flex-col items-start gap-5">
               {PAGE3_LINES.map((line, i) => (
                 <p
@@ -269,7 +299,7 @@ export default function ActivityDetailHTML(_props: Props) {
                 </p>
               ))}
             </div>
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-row items-start gap-4 md:flex-col md:items-center">
               <img
                 src="/qrcodes/kaleido.jpg"
                 alt="Kaleido QR"
