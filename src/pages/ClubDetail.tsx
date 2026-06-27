@@ -5,6 +5,7 @@ import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
 import { asset, clubImageSrc } from '../data/clubs';
 import type { Club } from '../data/clubs';
+import { useLocation } from 'react-router-dom';
 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
@@ -135,13 +136,19 @@ export default function ClubDetail() {
   const clubId = useClubIdParam();
   const club = useClub(clubId);
   const { goHome } = useClubNavigation();
+  const location = useLocation();
+  const fromActivity = (location.state as any)?.fromActivity;
+
+  const handleBack = fromActivity
+    ? () => window.history.back()
+    : goHome;
   const meta = club ? getCategoryMeta(club.category) : null;
 
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 px-6 py-10">
         <div className="mx-auto max-w-4xl">
-          <BackButton onClick={goHome} />
+          <BackButton onClick={handleBack} />
           {club ? (
             <div className="animate-fade-up">
               <ClubHeader club={club} />
