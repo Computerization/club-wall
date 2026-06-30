@@ -221,7 +221,7 @@ export default function Home() {
               hideRandom={eggActive}
             />
 
-            <UpcomingActivities />
+            <UpcomingActivities tiled={tiled} />
 
             {orderedCategories.map((category, index) => {
               const categoryClubs = clubs.filter((club) => club.category === category);
