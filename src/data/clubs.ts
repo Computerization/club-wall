@@ -1,4 +1,4 @@
-export type Category = 'Sports' | 'Arts' | 'Service' | 'Life' | 'Academic' | 'ClubsToBeEstablished';
+export type Category = 'Sports' | 'Arts' | 'Service' | 'Life' | 'Academic' /* | 'ClubsToBeEstablished' */ ;
 
 export interface Club {
   id: string;
@@ -43,6 +43,8 @@ export const clubs: Club[] = [
   { id: "11", name: "国际象棋社", category: "Sports", shortDesc: "Chess", tags: ["以棋会友", "策略", "思辨", "静心"], description: "国际象棋社是一个让同学们以棋会友、享受下棋之处。", image: "/covers/b4.jpg", posters: ["/posters/b4-1.jpg"], qrcodes: ["/qrcodes/b4-1.png"], posterHtml: "", contact: "" },
   { id: "12", name: "乒乓社", category: "Sports", shortDesc: "Table Tennis", tags: ["团结", "拼搏", "包容", "快乐乒乓"], description: "爱乒才会赢！我们欢迎任何对乒乓感兴趣的同学，包括零基础的同学！社长微信号：enehaodeo", image: "/covers/b1.jpg", posters: ["/posters/f29-1.jpg"], qrcodes: ["/qrcodes/f29-1.png"], posterHtml: "", contact: "" },
   { id: "13", name: "网球社", category: "Sports", shortDesc: "Tennis", tags: ["热爱", "拼搏", "成长", "超越"], description: "在网球场挥洒汗水，用热爱成就更好的自己。", image: "/covers/b10.jpg", posters: ["/posters/b10-1.jpg"], qrcodes: ["/qrcodes/b10-1.png"], posterHtml: "", contact: "" },
+  { id: "74", name: "匹克球社", category: "Sports", shortDesc: "Pickleball", tags: ["低门槛", "强社交", "竞技性", "趣味性","团队协作","安全可控"], description: "IB学业压力大？来匹克球社，用一场轻松又带劲的双打释放多巴胺！零基础友好，每周两次，挥拍交友，快乐减负。", image: "/covers/b75.png", posters: ["/posters/b75-1.png"], qrcodes: ["/qrcodes/b75-1.jpg"], posterHtml: "", contact: "" },
+  { id: "75", name: "绅士台球社", category: "Sports", shortDesc: "Billiards", tags: ["没有标签"], description: "没有简介", image: "/covers/no-cover.png", posters: ["/posters/no-poster.png"], qrcodes: ["/qrcodes/billiards.png"], posterHtml: "", contact: "" },
   // Arts
   { id: "14", name: "Dogma95 电影社", category: "Arts", shortDesc: "Film", tags: ["影评", "批判", "微电影摄制", "创造"], description: "解剖电影 理解电影 批判电影 创造电影", image: "/covers/f5.jpg", posters: ["/posters/f5-1.jpg"], qrcodes: ["/qrcodes/f5-1.png"], posterHtml: "", contact: "" },
   { id: "15", name: "Kaleido 万华境戏剧社", category: "Arts", shortDesc: "Theatre", tags: ["艺术", "交流", "思辨"], description: "在Kaleido专业化的戏剧制作过程中，你可以接触台前和台后的多种工作。来Kaleido，与我们一起踏入戏剧艺术的万华境。", image: "/covers/f41.jpg", posters: ["/posters/f41-1.jpg"], qrcodes: ["/qrcodes/kaleido.jpg"], posterHtml: "", contact: "" },
@@ -62,7 +64,7 @@ export const clubs: Club[] = [
   // Service
   { id: "28", name: "Prologue 动物保护社", category: "Service", shortDesc: "Animal Welfare", tags: ["温暖", "团结", "有爱", "抽象"], description: "看见动物，了解动物，保护动物", image: "/covers/f56.jpg", posters: [], qrcodes: ["/qrcodes/f56-1.png"], posterHtml: "/poster-html/prologue.html", contact: "" },
   { id: "29", name: "WFLA 学生公司 Student Firm", category: "Service", shortDesc: "Student Enterprise", tags: ["实践", "商业", "公益", "传承"], description: "以实践感受市场与销售的魅力，赚取人生的第一桶金", image: "/covers/f18.jpg", posters: ["/posters/f18-1.jpg"], qrcodes: ["/qrcodes/f18-1.png"], posterHtml: "", contact: "" },
-  { id: "30", name: "Asclepius 急救医学社", category: "Service", shortDesc: "First Aid & Medicine", tags: ["科普急救", "医学交流", "轻松社活", "学术分享"], description: "一个旨在科普急救，交流医学的服务类社团", image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400&h=300&fit=crop", posters: ["/posters/f3-1.jpg"], qrcodes: ["/qrcodes/f3-1.png"], posterHtml: "", contact: "" },
+  { id: "30", name: "Asclepius 急救医学社", category: "Service", shortDesc: "First Aid & Medicine", tags: ["科普急救", "医学交流", "轻松社活", "学术分享"], description: "一个旨在科普急救，交流医学的服务类社团", image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400&h=300&fit=crop", posters: ["/posters/f3-1.jpg"], qrcodes: ["/qrcodes/asclepius.jpg"], posterHtml: "", contact: "" },
   { id: "31", name: "1803K", category: "Service", shortDesc: "Charity · Hope Road", tags: ["桥梁", "希望", "启蒙", "承诺"], description: "The 1803 km of hope threads through mountains to touch young hearts. 这条长达1803公里的希望之路穿越群山，直抵年轻心灵。", image: "/covers/f1.jpg", posters: ["/posters/p36-1.jpg"], qrcodes: ["/qrcodes/f1-1.png"], posterHtml: "", contact: "" },
   { id: "32", name: "微笑社 Careholic", category: "Service", shortDesc: "Care & Volunteering", tags: ["Helping", "Caring", "Loving"], description: "你们的笑容是真正的不老药", image: "/covers/f39.jpg", posters: ["/posters/f39-1.jpg"], qrcodes: ["/qrcodes/f39-1.png"], posterHtml: "", contact: "" },
   { id: "33", name: "拓科传媒 Techomedia", category: "Service", shortDesc: "Tech & Media", tags: ["科技", "传媒"], description: "作为华东首家独立学生创客社团，TechMedia带你追踪前沿科技、玩转社交媒体，邂逅科技与传媒的独特跨界魅力。", image: "/covers/f42.jpg", posters: ["/posters/techo.png"], qrcodes: ["/qrcodes/techo.jpg"], posterHtml: "", contact: "" },
@@ -107,13 +109,10 @@ export const clubs: Club[] = [
   { id: "70", name: "食品研究社", category: "Academic", shortDesc: "Food Science", tags: ["美食", "健康", "食品安全", "食品化学"], description: "我们欢迎任何对食品感兴趣的同学，组件世外老吃家天堂。社长微信号：enehaodeo", image: "/covers/b13.jpg", posters: ["/posters/f67-1.jpg"], qrcodes: ["/qrcodes/f67-1.png"], posterHtml: "", contact: "" },
   { id: "71", name: "WFLA数学社", category: "Academic", shortDesc: "Math", tags: ["数学", "思维", "竞赛", "钻研"], description: "数学基础和竞赛水平并不是玩转数学的必要条件；只要你对数学保有好奇和热情，WFLA数学社都欢迎你的加入！无论是讨论竞赛技巧与趣味题目，亦或探索高等数学和深层理论，这里都有你的一席之地！", image: "/covers/b6.jpg", posters: ["/posters/b6-1.jpg"], qrcodes: [], posterHtml: "", contact: "" },
   { id: "72", name: "生物社", category: "Academic", shortDesc: "Biology", tags: ["生命", "实验", "观察", "探究"], description: "从细胞到生态，一起探索生命科学的奇妙。", image: "/covers/f54.jpg", posters: ["/posters/f54-1.jpg"], qrcodes: ["/qrcodes/f54-1.png"], posterHtml: "", contact: "" },
-  // ClubsToBeEstablished
-  { id: "73", name: "阈限空间 Negative Space Design", category: "ClubsToBeEstablished", shortDesc: "Design", tags: ["创造", "平等", "改变世界"], description: "该社团旨在激发观察力与打破现实的能力，培养在看到世界的不完美时，愿意去改变些什么的人。", image: "/covers/f62.jpg", posters: ["/posters/f62-1.jpg"], qrcodes: ["/qrcodes/f62-1.png"], posterHtml: "", contact: "" },
-  { id: "74", name: "沪语弄堂 The Shanghainese Londaon", category: "ClubsToBeEstablished", shortDesc: "Shanghainese", tags: ["语言", "文化", "上海", "传承"], description: "本社团聚焦上海语言与文化，旨在向内激发兴趣、深入理解，向外推广沪语文化，为拯救沪语出力。", image: "/covers/b8.jpg", posters: ["/posters/b8-1.jpg"], qrcodes: ["/qrcodes/b8-1.png"], posterHtml: "", contact: "微信: wuwh0118" },
-  { id: "75", name: "匹克球社", category: "ClubsToBeEstablished", shortDesc: "Pickleball", tags: ["低门槛", "强社交", "竞技性", "趣味性","团队协作","安全可控"], description: "IB学业压力大？来匹克球社，用一场轻松又带劲的双打释放多巴胺！零基础友好，每周两次，挥拍交友，快乐减负。", image: "/covers/b75.png", posters: ["/posters/b75-1.png"], qrcodes: ["/qrcodes/b75-1.jpg"], posterHtml: "", contact: "" },
-  { id: "77", name: "链接实验室 Nexus", category: "ClubsToBeEstablished", shortDesc: "Engineering", tags: ["解决问题", "运用工程"], description: "以运用工程思维满足社会需求为宗旨，将工程技术与真实社会构成链接，探索工程在社区服务、校园建设和公益事业中的应用价值，培养同学们建立工程技术与社会责任相结合的意识。", image: "/covers/nexus.png", posters: ["/posters/nexus.png"], qrcodes: ["/qrcodes/nexus.png"], posterHtml: "", contact: "" },
-  { id: "78", name: "绅士台球社", category: "ClubsToBeEstablished", shortDesc: "Billiards", tags: ["没有标签"], description: "没有简介", image: "/covers/no-cover.png", posters: ["/posters/no-poster.png"], qrcodes: ["/qrcodes/billiards.png"], posterHtml: "", contact: "" },
-  { id: "79", name: "气象社", category: "ClubsToBeEstablished", shortDesc: "Weather", tags: ["没有标签"], description: "没有简介", image: "/covers/no-cover.png", posters: ["/posters/no-poster.png"], qrcodes: ["/qrcodes/no-qrcode.png"], posterHtml: "", contact: "" },
+  { id: "73", name: "沪语弄堂", category: "Academic", shortDesc: "Shanghainese", tags: ["语言", "文化", "上海", "传承"], description: "来沪语弄堂，深入聚焦上海语言与文化，向内激发兴趣、深入理解，向外推广沪语文化，为拯救沪语出力！", image: "/covers/b8.jpg", posters: ["/posters/b8-1.jpg"], qrcodes: ["/qrcodes/shanghainese.jpg"], posterHtml: "", contact: "微信: wuwh0118" },
+  // ClubsToBeEstablished:
+  // In: 沪语弄堂、绅士台球社、匹克球社
+  // Out: 阈限空间、链接实验室、气象社
 ];
 
 // Prefix a site-relative asset path with Vite's base URL so it resolves under
