@@ -237,7 +237,7 @@ export default function Home() {
             <div className="mx-auto max-w-7xl px-6 pb-6">
               <button
                 onClick={handleBack}
-                className="mb-5 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white"
+                className="mb-5 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white active:brightness-50"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>返回 Back</span>
@@ -321,13 +321,13 @@ export default function Home() {
           on the gallery view (hidden while searching) and revealed once the user
           scrolls past the hero. Each button is positioned independently so the
           animation toggle stays put even when the random button turns evasive. */}
-      {!isSearching && (
+      {!isSearching && !isRatingActive && (
         <button
           onClick={() => setTiled((t) => !t)}
           aria-pressed={tiled}
           title={tiled ? '启用滚动动画' : '禁用滚动动画'}
           className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold
-                     text-white shadow-lift transition-all duration-300 hover:scale-105
+                     text-white shadow-lift transition-[transform,opacity] duration-300 hover:scale-105 active:brightness-50
                      ${scrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}
                      ${tiled ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-red-500 hover:bg-red-400'}`}
         >
@@ -337,13 +337,13 @@ export default function Home() {
       )}
 
       {/* Random button — rests just above the toggle; turns evasive after the egg. */}
-      {!isSearching && !eggActive && (
+      {!isSearching && !isRatingActive && !eggActive && (
         <button
           ref={restRef}
           onClick={openRandomClub}
           style={{ bottom: RANDOM_BOTTOM }}
           className={`fixed right-6 z-50 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold
-                     text-ink-900 shadow-lift transition-all duration-300 hover:scale-105 hover:bg-brand-light hover:text-white
+                     text-ink-900 shadow-lift transition-[transform,opacity] duration-300 hover:scale-105 hover:bg-brand-light hover:text-white active:brightness-50
                      ${scrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}`}
         >
           <Shuffle className="h-4 w-4" />
@@ -352,13 +352,13 @@ export default function Home() {
       )}
 
       {/* Easter egg: the shy random button, fleeing the cursor around the screen. */}
-      {!isSearching && eggActive && (
+      {!isSearching && !isRatingActive && eggActive && (
         <button
           ref={evadeRef}
           onClick={openRandomClub}
           style={{ left: evadePos.x, top: evadePos.y }}
           className="fixed z-50 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold
-                     text-ink-900 shadow-lift transition-[left,top] duration-200 ease-out hover:bg-brand-light hover:text-white"
+                     text-ink-900 shadow-lift transition-[left,top] duration-200 ease-out hover:bg-brand-light hover:text-white active:brightness-50"
         >
           <Shuffle className="h-4 w-4" />
           <span>随机社团</span>

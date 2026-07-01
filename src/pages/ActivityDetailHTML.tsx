@@ -358,7 +358,7 @@ export default function ActivityDetailHTML(_props: Props) {
                 }}
               />
               <div
-                className="pointer-events-auto cursor-pointer rounded-2xl ring-1 ring-white/10 transition-shadow"
+                className="pointer-events-auto cursor-pointer rounded-2xl ring-1 ring-white/10 transition-shadow active:brightness-50"
                 style={{
                   opacity: qrOpacity,
                   transition: `opacity ${trans}`,
@@ -388,7 +388,7 @@ export default function ActivityDetailHTML(_props: Props) {
 
       <button
         onClick={() => navigate('/')}
-        className="fixed left-6 top-6 z-50 inline-flex items-center justify-center rounded-full glass-strong p-3 text-white/80 transition-colors hover:text-white"
+        className="fixed left-6 top-6 z-50 inline-flex items-center justify-center rounded-full glass-strong p-3 text-white/80 transition-colors hover:text-white active:brightness-50"
       >
         <ArrowLeft className="h-5 w-5" />
       </button>
@@ -396,7 +396,7 @@ export default function ActivityDetailHTML(_props: Props) {
       {showSignup && (
         <button
           onClick={scrollToBottom}
-          className="fixed left-20 top-6 z-50 rounded-full glass-strong px-5 py-2.5 text-sm font-bold text-white/80 transition-all hover:text-white hover:scale-105"
+          className="fixed left-20 top-6 z-50 rounded-full glass-strong px-5 py-2.5 text-sm font-bold text-white/80 transition-[transform,opacity] hover:text-white hover:scale-105 active:brightness-50"
         >
           报名
         </button>

@@ -127,7 +127,7 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             <button
               onClick={() => onOpenFull(club.id)}
-              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.03] active:brightness-50"
               style={{ background: meta.accent }}
             >
               查看完整详情
@@ -143,7 +143,7 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
         <button
           onClick={onClose}
           aria-label="Close preview"
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white active:brightness-50"
         >
           <X className="h-4.5 w-4.5" />
         </button>

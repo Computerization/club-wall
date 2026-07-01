@@ -16,7 +16,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="mb-8 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white"
+      className="mb-8 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white active:brightness-50"
     >
       <ArrowLeft className="h-4 w-4" />
       <span className="font-medium">返回 Back</span>
@@ -93,7 +93,7 @@ function NotFound({ onGoHome }: { onGoHome: () => void }) {
       <p className="mt-2 text-white/40">This club could not be found.</p>
       <button
         onClick={onGoHome}
-        className="mt-6 rounded-full bg-brand-light px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-105"
+        className="mt-6 rounded-full bg-brand-light px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-105 active:brightness-50"
       >
         返回首页 Home
       </button>

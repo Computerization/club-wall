@@ -8,11 +8,32 @@ import { clubs } from '../data/clubs';
 import type { Activity } from '../data/activities';
 import ActivityDetailHTML from './ActivityDetailHTML';
 
+function hexToRgb(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return [r, g, b];
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return Math.round(a + (b - a) * t);
+}
+
+function lightenHex(hex: string, t: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return `#${((1 << 24) + (lerp(r, 255, t) << 16) + (lerp(g, 255, t) << 8) + lerp(b, 255, t)).toString(16).slice(1)}`;
+}
+
+function darkenHex(hex: string, t: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return `#${((1 << 24) + (lerp(r, 0, t) << 16) + (lerp(g, 0, t) << 8) + lerp(b, 0, t)).toString(16).slice(1)}`;
+}
+
 function BackButton({ onClick, color }: { onClick: () => void; color: string }) {
   return (
     <button
       onClick={onClick}
-      className="mb-8 inline-flex items-center gap-2 text-sm transition-colors hover:text-white"
+      className="mb-8 inline-flex items-center gap-2 text-sm transition-colors hover:!text-white active:brightness-50"
       style={{ color }}
     >
       <ArrowLeft className="h-4 w-4" />
@@ -97,7 +118,7 @@ function NotFound({ onGoBack }: { onGoBack: () => void }) {
       <p className="mt-2 text-white/40">This activity could not be found.</p>
       <button
         onClick={onGoBack}
-        className="mt-6 rounded-full bg-brand-light px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-105"
+        className="mt-6 rounded-full bg-brand-light px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-105 active:brightness-50"
       >
         返回首页 Home
       </button>
@@ -121,9 +142,9 @@ export default function ActivityDetail() {
   useEffect(() => {
     if (!activity) return;
     const root = document.documentElement;
-    root.style.setProperty('--theme-light', color);
+    root.style.setProperty('--theme-light', lightenHex(color, 0.4));
     root.style.setProperty('--theme', color);
-    root.style.setProperty('--theme-dark', color);
+    root.style.setProperty('--theme-dark', darkenHex(color, 0.6));
     return () => {
       root.style.setProperty('--theme-light', '#2dd4a7');
       root.style.setProperty('--theme', '#1A5F4A');
@@ -149,7 +170,7 @@ export default function ActivityDetail() {
                       <span className="text-xs text-white/40">所属社团</span>
                       <button
                         onClick={() => club && navigate(`/club/${club.id}`)}
-                        className="mt-0.5 block text-base font-semibold transition-colors hover:text-white"
+                        className="mt-0.5 block text-base font-semibold transition-colors hover:!text-white active:brightness-50"
                         style={{ color }}
                       >
                         {activity.clubName}

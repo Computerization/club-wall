@@ -60,7 +60,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-3 sm:px-6">
         {/* Wordmark */}
         <div className="flex shrink-0 items-center gap-2">
-          <a href="/" className="flex items-center gap-2.5">
+          <a href="/" className="flex items-center gap-2.5 active:brightness-50">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg ring-1"
               style={{
                 backgroundColor: 'color-mix(in srgb, var(--theme-light) 15%, transparent)',
@@ -78,7 +78,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
           {computerizationClub && (
             <Link
               to={`/club/${computerizationClub.id}`}
-              className="hidden text-xs text-white/35 transition-colors hover:text-brand-light sm:block"
+              className="hidden text-xs text-white/35 transition-colors hover:text-brand-light active:brightness-50 sm:block"
             >
               by Computerization
             </Link>
@@ -95,7 +95,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
                   key={cat}
                   href={`#cat-${cat}`}
                   onClick={(e) => jumpToCategory(e, cat)}
-                  className="group relative whitespace-nowrap rounded-full px-3 py-1.5 text-sm text-white/65 transition-colors hover:text-white"
+                  className="group relative whitespace-nowrap rounded-full px-3 py-1.5 text-sm text-white/65 transition-colors hover:text-white active:text-white/40"
                 >
                   {meta.en}
                   <span
@@ -115,7 +115,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
               <button
                 key={rating}
                 onClick={() => toggleRating(rating)}
-                className={`flex flex-col items-center rounded-full px-2.5 py-1 text-[10px] leading-none transition-colors ${
+                className={`flex flex-col items-center rounded-full px-2.5 py-1 text-[10px] leading-none transition-colors active:brightness-50 ${
                   ratingFilter?.has(rating)
                     ? 'font-medium'
                     : 'text-white/50 hover:text-white/80'

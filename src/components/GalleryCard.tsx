@@ -27,8 +27,8 @@ export default function GalleryCard({ club, onClick }: GalleryCardProps) {
     <article
       onClick={() => onClick(club.id)}
       className="group relative h-full w-full cursor-pointer overflow-hidden rounded-2xl
-                 bg-ink-800 shadow-card ring-1 ring-white/10 transition-all duration-500
-                 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-lift"
+                 bg-ink-800 shadow-card ring-1 ring-white/10 transition-[transform,box-shadow] duration-500
+                 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-lift active:brightness-50"
       style={{ ['--accent' as string]: meta.accent }}
     >
       {/* Image */}

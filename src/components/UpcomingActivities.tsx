@@ -15,9 +15,13 @@ interface UpcomingActivitiesProps {
 function ActivitySlide({
   activity,
   onClick,
+  isPaused,
+  isActive,
 }: {
   activity: Activity;
   onClick: (id: string) => void;
+  isPaused?: boolean;
+  isActive?: boolean;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -38,7 +42,7 @@ function ActivitySlide({
     <button
       onClick={() => onClick(activity.id)}
       className="group relative w-full shrink-0 cursor-pointer overflow-hidden rounded-2xl text-left
-                 ring-1 ring-white/10
+                 ring-1 ring-white/10 active:brightness-50
                  focus-visible:outline-none focus-visible:ring-2"
       style={{
         aspectRatio: '16 / 9',
@@ -63,6 +67,23 @@ function ActivitySlide({
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+
+      {/* Badges */}
+      {isPaused && isActive && activity.id !== 'L1' && (
+        <div className="absolute right-3 top-3 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm transition-opacity duration-300">
+          已暂停
+        </div>
+      )}
+      {(activity.id === 'L1' || activity.id === 'L3') && (
+        <div
+          className={`absolute right-3 top-3 z-10 rounded-full px-3 py-1 text-xs text-white backdrop-blur-sm transition-opacity duration-300 ${
+            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          }`}
+          style={{ backgroundColor: `${activity.color}cc` }}
+        >
+          招募中
+        </div>
+      )}
 
       {/* Content */}
       <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
@@ -212,25 +233,15 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
             {filtered.map((activity, index) => (
               <div
                 key={activity.id}
-                className="relative shrink-0 snap-center"
+                className="shrink-0 snap-center"
                 style={{ flex: '0 0 60vw', maxWidth: '720px' }}
               >
-                <ActivitySlide activity={activity} onClick={handleSlideClick} />
-                {isPaused && index === safeI && activity.id !== 'L1' && (
-                  <div className="absolute right-3 top-3 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm transition-opacity duration-300">
-                    已暂停
-                  </div>
-                )}
-                {(activity.id === 'L1' || activity.id === 'L3') && (
-                  <div
-                    className={`absolute right-3 top-3 z-10 rounded-full px-3 py-1 text-xs text-white backdrop-blur-sm transition-opacity duration-300 ${
-                      index === safeI ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    style={{ backgroundColor: `${activity.color}cc` }}
-                  >
-                    招募中
-                  </div>
-                )}
+                <ActivitySlide
+                  activity={activity}
+                  onClick={handleSlideClick}
+                  isPaused={isPaused}
+                  isActive={index === safeI}
+                />
               </div>
             ))}
           </div>
@@ -240,8 +251,8 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
         <button
           onClick={goPrev}
           className="absolute left-9 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100 active:brightness-50
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
           aria-label="上一张"
         >
@@ -252,8 +263,8 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
         <button
           onClick={goNext}
           className="absolute right-9 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100 active:brightness-50
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
           aria-label="下一张"
         >
@@ -266,7 +277,7 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
             <button
               key={activity.id}
               onClick={() => goTo(index)}
-              className="rounded-full transition-all duration-300"
+              className="rounded-full transition-[transform,opacity] duration-300 active:brightness-50"
               style={
                 index === current
                   ? { height: 10, width: 32, backgroundColor: activity.color }
