@@ -9,7 +9,7 @@ import ClubPreviewModal from '../components/ClubPreviewModal';
 import UpcomingActivities from '../components/UpcomingActivities';
 import { useClubNavigation } from '../hooks/useClub';
 import { categories, clubs } from '../data/clubs';
-import type { Club } from '../data/clubs';
+import type { Club, Rating } from '../data/clubs';
 import { pickWeightedClub } from '../data/clubWeights';
 
 export default function Home() {
@@ -20,6 +20,8 @@ export default function Home() {
   // When true, the auto-scrolling marquee animation is disabled and rows tile
   // into a static grid instead. Toggled from the floating corner control.
   const [tiled, setTiled] = useState(false);
+  // Rating filter: empty set = show all, otherwise show clubs matching any selected rating
+  const [ratingFilter, setRatingFilter] = useState<Set<Rating>>(new Set());
   // The floating corner controls only appear once the user scrolls past the hero.
   const [scrolled, setScrolled] = useState(false);
 
@@ -122,6 +124,47 @@ export default function Home() {
     : clubs;
 
   const isSearching = searchQuery.length > 0;
+  const isRatingActive = ratingFilter.size > 0;
+
+  // When unselecting rating filter, scroll down to hide the Hero from view
+  const wasRatingActive = useRef(false);
+  useEffect(() => {
+    if (wasRatingActive.current && !isRatingActive) {
+      requestAnimationFrame(() => {
+        document.getElementById('upcoming-activities')?.scrollIntoView({ behavior: 'instant' });
+      });
+    }
+    wasRatingActive.current = isRatingActive;
+  }, [isRatingActive]);
+
+  // Clubs filtered by selected ratings, sorted by category then alphabetically
+  const ratedClubs = useMemo(() => {
+    if (!isRatingActive) return [] as Club[];
+    return clubs
+      .filter((c) => c.rating && ratingFilter.has(c.rating))
+      .sort((a, b) => {
+        const catOrder: Record<string, number> = { Sports: 0, Arts: 1, Service: 2, Life: 3, Academic: 4 };
+        const cA = catOrder[a.category] ?? 99;
+        const cB = catOrder[b.category] ?? 99;
+        if (cA !== cB) return cA - cB;
+        return a.name.localeCompare(b.name, 'zh');
+      });
+  }, [isRatingActive, ratingFilter]);
+
+  // Group by rating: five-star first, outstanding below
+  const ratedByRating = useMemo(() => {
+    const order: Rating[] = ['five-star', 'outstanding'];
+    return order
+      .filter((r) => ratingFilter.has(r))
+      .map((r) => ({
+        rating: r,
+        label: r === 'five-star' ? '五星社团' : '优秀社团',
+        clubs: ratedClubs.filter((c) => c.rating === r),
+      }))
+      .filter((g) => g.clubs.length > 0);
+  }, [ratingFilter, ratedClubs]);
+
+  const ratedClubIds = useMemo(() => new Set(ratedClubs.map((c) => c.id)), [ratedClubs]);
 
   // Randomize the category row order once per page load (Fisher-Yates), so the
   // wall feels fresh on each refresh. The Forming row stays pinned at the bottom.
@@ -136,7 +179,7 @@ export default function Home() {
 
   // Rendered as its own row below the auto-scrolling categories; `categories`
   // intentionally excludes this group so it only appears here, statically.
-  const pendingClubs = clubs.filter((club) => club.category === 'ClubsToBeEstablished');
+  const pendingClubs = clubs.filter((club) => (club.category as string) === 'ClubsToBeEstablished');
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -184,6 +227,8 @@ export default function Home() {
         onSearchKeyDown={handleSearchKeyDown}
         minimal={isSearching}
         onClubClick={openPreview}
+        ratingFilter={ratingFilter}
+        onRatingFilter={setRatingFilter}
       />
 
       <main className="flex-1">
@@ -201,7 +246,7 @@ export default function Home() {
                 Search
               </h2>
               <p className="mt-1 text-sm text-white/50">
-                {filteredClubs.length} 个社团匹配 “{searchQuery}”
+                {filteredClubs.length} 个社团匹配 "{searchQuery}"
               </p>
             </div>
             {filteredClubs.length > 0 ? (
@@ -212,6 +257,23 @@ export default function Home() {
               </div>
             )}
           </div>
+        ) : isRatingActive ? (
+          <>
+            <UpcomingActivities clubIds={ratedClubIds} />
+            {ratedByRating.map((group) => (
+              <section key={group.rating} className="py-8">
+                <div className="mx-auto max-w-7xl px-6 mb-5">
+                  <h2 className="font-display text-2xl font-bold text-white">
+                    {group.label}
+                  </h2>
+                  <p className="mt-1 text-sm text-white/50">
+                    {group.clubs.length} 个社团
+                  </p>
+                </div>
+                <ClubList clubs={group.clubs} onClubClick={openPreview} />
+              </section>
+            ))}
+          </>
         ) : (
           <>
             <Hero

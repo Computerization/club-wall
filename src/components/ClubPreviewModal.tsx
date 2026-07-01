@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
 import { X, ArrowRight, Sparkles } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc } from '../data/clubs';
+import { clubImageSrc, asset } from '../data/clubs';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
+
+const RATING_IMG: Record<string, string> = {
+  'five-star': 'icons/five-star-club.png',
+  outstanding: 'icons/good-club.png',
+};
 
 interface ClubPreviewModalProps {
   club: Club | null;
@@ -109,6 +114,14 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
             <p className="mt-4 text-sm text-white/60">
               <span className="font-semibold text-white/80">联系方式 · Contact：</span> {club.contact}
             </p>
+          )}
+
+          {club.rating && (
+            <img
+              src={asset(RATING_IMG[club.rating])}
+              alt={club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+              className="mt-4 h-14 w-auto object-contain self-start"
+            />
           )}
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">

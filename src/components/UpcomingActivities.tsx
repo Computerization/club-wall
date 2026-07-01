@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { asset } from '../data/clubs';
@@ -8,6 +8,10 @@ import useActivityTheme from '../hooks/useActivityTheme';
 
 const AUTO_INTERVAL = 5000;
 
+interface UpcomingActivitiesProps {
+  clubIds?: Set<string>;
+}
+
 function ActivitySlide({
   activity,
   onClick,
@@ -16,7 +20,6 @@ function ActivitySlide({
   onClick: (id: string) => void;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -34,16 +37,12 @@ function ActivitySlide({
   return (
     <button
       onClick={() => onClick(activity.id)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       className="group relative w-full shrink-0 cursor-pointer overflow-hidden rounded-2xl text-left
-                 ring-1 ring-white/10 transition-shadow duration-300
+                 ring-1 ring-white/10
                  focus-visible:outline-none focus-visible:ring-2"
       style={{
         aspectRatio: '16 / 9',
-        boxShadow: hovered
-          ? `0 0 32px ${activity.color}44`
-          : '0 30px 70px -25px rgba(0,0,0,0.85)',
+        boxShadow: '0 30px 70px -25px rgba(0,0,0,0.85)',
       } as React.CSSProperties}
       aria-label={`查看活动：${activity.title}`}
     >
@@ -57,7 +56,7 @@ function ActivitySlide({
         src={asset(activity.image)}
         alt={activity.title}
         loading="lazy"
-        className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-105 ${
+        className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${
           imgLoaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
@@ -85,17 +84,30 @@ function ActivitySlide({
   );
 }
 
-export default function UpcomingActivities() {
+export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps = {}) {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const total = activities.length;
 
-  const currentActivity = activities[current];
+  const filtered = useMemo(
+    () => (clubIds ? activities.filter((a) => clubIds.has(a.clubId)) : activities),
+    [clubIds],
+  );
+  const total = filtered.length;
+  const safeI = total > 0 ? ((current % total) + total) % total : 0;
+
+  const currentActivity = filtered[safeI];
   useActivityTheme(currentActivity, sectionRef);
+
+  useEffect(() => {
+    if (current >= total && total > 0) {
+      setCurrent(0);
+    }
+  }, [current, total]);
 
   const goTo = useCallback(
     (index: number) => {
@@ -117,7 +129,6 @@ export default function UpcomingActivities() {
   const goNext = useCallback(() => goTo(current + 1), [goTo, current]);
   const goPrev = useCallback(() => goTo(current - 1), [goTo, current]);
 
-  // Auto-play
   useEffect(() => {
     if (isPaused || total <= 1) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -129,13 +140,32 @@ export default function UpcomingActivities() {
     };
   }, [isPaused, goNext, total]);
 
-  // Sync scroll-based index (for touch/swipe)
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-    const index = Math.round(el.scrollLeft / el.clientWidth);
-    if (index !== current && index >= 0 && index < total) {
-      setCurrent(index);
+    const slide = el.children[0] as HTMLElement | null;
+    const step = (slide?.offsetWidth ?? 0) + 20;
+    if (step <= 0) return;
+    const index = Math.round(el.scrollLeft / step);
+
+    // Debounced snap: after user stops scrolling, animate to nearest snap point
+    if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
+    snapTimerRef.current = setTimeout(() => {
+      if (!containerRef.current) return;
+      const s = containerRef.current.children[0] as HTMLElement | null;
+      const st = (s?.offsetWidth ?? 0) + 20;
+      if (st <= 0) return;
+      const snapIdx = Math.round(containerRef.current.scrollLeft / st);
+      const targetLeft = snapIdx * st;
+      const diff = Math.abs(containerRef.current.scrollLeft - targetLeft);
+      if (diff > 2) {
+        containerRef.current.scrollTo({ left: targetLeft, behavior: 'smooth' });
+      }
+    }, 120);
+
+    const clampedIdx = Math.max(0, Math.min(index, total - 1));
+    if (clampedIdx !== current) {
+      setCurrent(clampedIdx);
     }
   }, [current, total]);
 
@@ -149,7 +179,7 @@ export default function UpcomingActivities() {
   if (total === 0) return null;
 
   return (
-    <section ref={sectionRef} className="py-14">
+    <section ref={sectionRef} id="upcoming-activities" className="py-14">
       {/* Section header */}
       <div className="mx-auto mb-6 flex max-w-7xl items-end justify-between px-6">
         <div>
@@ -166,26 +196,44 @@ export default function UpcomingActivities() {
 
       {/* Carousel */}
       <div
-        className="group relative mx-auto max-w-7xl px-6"
+        className="group/carousel relative mx-auto max-w-7xl px-6"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Slides track */}
-        <div
-          ref={containerRef}
-          onScroll={handleScroll}
-          className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain rounded-2xl"
-          style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }}
-        >
-          {activities.map((activity) => (
-            <div
-              key={activity.id}
-              className="w-full shrink-0 snap-start"
-              style={{ flex: '0 0 100%' }}
-            >
-              <ActivitySlide activity={activity} onClick={handleSlideClick} />
-            </div>
-          ))}
+        <div className="relative overflow-hidden rounded-2xl">
+          {/* Gradient fades */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-ink-950 to-transparent" />
+          <div
+            ref={containerRef}
+            onScroll={handleScroll}
+            className="scrollbar-hide flex snap-x snap-mandatory scroll-smooth gap-5 overflow-x-auto overflow-x-touch px-[25vw]"
+          >
+            {filtered.map((activity, index) => (
+              <div
+                key={activity.id}
+                className="relative shrink-0 snap-center"
+                style={{ flex: '0 0 60vw', maxWidth: '720px' }}
+              >
+                <ActivitySlide activity={activity} onClick={handleSlideClick} />
+                {isPaused && index === safeI && activity.id !== 'L1' && (
+                  <div className="absolute right-3 top-3 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm transition-opacity duration-300">
+                    已暂停
+                  </div>
+                )}
+                {(activity.id === 'L1' || activity.id === 'L3') && (
+                  <div
+                    className={`absolute right-3 top-3 z-10 rounded-full px-3 py-1 text-xs text-white backdrop-blur-sm transition-opacity duration-300 ${
+                      index === safeI ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    style={{ backgroundColor: `${activity.color}cc` }}
+                  >
+                    招募中
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Prev button */}
@@ -193,7 +241,7 @@ export default function UpcomingActivities() {
           onClick={goPrev}
           className="absolute left-9 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
                      rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 hover:bg-white/20 group-hover:opacity-100
+                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
           aria-label="上一张"
         >
@@ -205,7 +253,7 @@ export default function UpcomingActivities() {
           onClick={goNext}
           className="absolute right-9 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
                      rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 hover:bg-white/20 group-hover:opacity-100
+                     hover:scale-110 hover:bg-white/20 group-hover/carousel:opacity-100
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
           aria-label="下一张"
         >
@@ -214,7 +262,7 @@ export default function UpcomingActivities() {
 
         {/* Dots */}
         <div className="mt-5 flex items-center justify-center gap-2">
-          {activities.map((activity, index) => (
+          {filtered.map((activity, index) => (
             <button
               key={activity.id}
               onClick={() => goTo(index)}
@@ -228,20 +276,6 @@ export default function UpcomingActivities() {
             />
           ))}
         </div>
-
-        {isPaused && activities[current].id !== 'L1' && (
-          <div className="absolute right-12 top-4 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70 backdrop-blur-sm">
-            已暂停
-          </div>
-        )}
-        {activities[current].id === 'L1' && (
-          <div
-            className="absolute right-12 top-4 z-10 rounded-full px-3 py-1 text-xs text-white backdrop-blur-sm"
-            style={{ backgroundColor: `${activities[current].color}cc` }}
-          >
-            招募中
-          </div>
-        )}
       </div>
     </section>
   );

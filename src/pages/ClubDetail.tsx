@@ -5,6 +5,11 @@ import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
 import { asset, clubImageSrc } from '../data/clubs';
 import type { Club } from '../data/clubs';
+
+const RATING_IMG: Record<string, string> = {
+  'five-star': 'icons/five-star-club.png',
+  outstanding: 'icons/good-club.png',
+};
 import { useLocation } from 'react-router-dom';
 
 function BackButton({ onClick }: { onClick: () => void }) {
@@ -204,6 +209,18 @@ export default function ClubDetail() {
                   <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
                     信息 · Info
                   </h3>
+                  {club.rating && (
+                    <div className="mb-4 flex items-center gap-2">
+                      <img
+                        src={asset(RATING_IMG[club.rating])}
+                        alt={club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+                        className="h-14 w-auto object-contain"
+                      />
+                      <span className="text-sm font-medium text-white/80">
+                        {club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+                      </span>
+                    </div>
+                  )}
                   <dl className="space-y-3 text-sm">
                     <div>
                       <dt className="text-white/40">领域 Category</dt>

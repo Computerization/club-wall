@@ -1,7 +1,12 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc } from '../data/clubs';
+import { clubImageSrc, asset } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+
+const RATING_IMG: Record<string, string> = {
+  'five-star': 'icons/five-star-club.png',
+  outstanding: 'icons/good-club.png',
+};
 
 interface GalleryCardProps {
   club: Club;
@@ -61,6 +66,17 @@ export default function GalleryCard({ club, onClick }: GalleryCardProps) {
           {meta.en}
         </span>
       </div>
+
+      {/* Rating badge */}
+      {club.rating && (
+        <div className="absolute right-3 top-3 z-10">
+          <img
+            src={asset(RATING_IMG[club.rating])}
+            alt={club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+            className="h-14 w-14 object-contain drop-shadow-md"
+          />
+        </div>
+      )}
 
       {/* Content */}
       <div className="absolute inset-x-0 bottom-0 z-10 p-4">

@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { categories, clubs } from '../data/clubs';
+import { categories, clubs, asset } from '../data/clubs';
+import type { Rating } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
 import ClubDropdown from './ClubDropdown';
 
@@ -14,9 +15,11 @@ interface HeaderProps {
   /** When true, hides the category jump-rail (e.g. on search/detail views). */
   minimal?: boolean;
   onClubClick?: (id: string) => void;
+  ratingFilter?: Set<Rating>;
+  onRatingFilter?: (filter: Set<Rating>) => void;
 }
 
-export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, minimal = false, onClubClick }: HeaderProps) {
+export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, minimal = false, onClubClick, ratingFilter, onRatingFilter }: HeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +33,14 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [dropdownOpen]);
+
+  const toggleRating = (rating: Rating) => {
+    if (!onRatingFilter) return;
+    const next = new Set(ratingFilter ?? []);
+    if (next.has(rating)) next.delete(rating);
+    else next.add(rating);
+    onRatingFilter(next);
+  };
 
   const handleClubClick = (id: string) => {
     setDropdownOpen(false);
@@ -95,6 +106,31 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
               );
             })}
           </nav>
+        )}
+
+        {/* Rating filter buttons */}
+        {onRatingFilter && (
+          <div className="flex shrink-0 items-center gap-1">
+            {(['five-star', 'outstanding'] as Rating[]).map((rating) => (
+              <button
+                key={rating}
+                onClick={() => toggleRating(rating)}
+                className={`flex flex-col items-center rounded-full px-2.5 py-1 text-[10px] leading-none transition-colors ${
+                  ratingFilter?.has(rating)
+                    ? 'font-medium'
+                    : 'text-white/50 hover:text-white/80'
+                }`}
+                style={ratingFilter?.has(rating) ? { color: 'var(--theme-light)', background: 'color-mix(in srgb, var(--theme-light) 15%, transparent)' } : undefined}
+              >
+                <img
+                  src={asset(rating === 'five-star' ? 'icons/five-star-club.png' : 'icons/good-club.png')}
+                  alt=""
+                  className="h-4 w-4 object-contain"
+                />
+                <span>{rating === 'five-star' ? '五星社团' : '优秀社团'}</span>
+              </button>
+            ))}
+          </div>
         )}
 
         {/* Search */}
