@@ -58,7 +58,7 @@ export default function Hero({ clubCount, categoryCount, onRandomClub, hideRando
           <button
             onClick={onRandomClub}
             className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900
-                       shadow-lg transition-all duration-300 hover:scale-105 hover:text-white"
+                       shadow-lg transition-[transform,opacity] duration-300 hover:scale-105 hover:text-white active:brightness-50"
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'var(--theme-light)';
             }}

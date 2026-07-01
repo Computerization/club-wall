@@ -1,7 +1,12 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc } from '../data/clubs';
+import { clubImageSrc, asset } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+
+const RATING_IMG: Record<string, string> = {
+  'five-star': 'icons/five-star-club.png',
+  outstanding: 'icons/good-club.png',
+};
 
 interface GalleryCardProps {
   club: Club;
@@ -22,8 +27,8 @@ export default function GalleryCard({ club, onClick }: GalleryCardProps) {
     <article
       onClick={() => onClick(club.id)}
       className="group relative h-full w-full cursor-pointer overflow-hidden rounded-2xl
-                 bg-ink-800 shadow-card ring-1 ring-white/10 transition-all duration-500
-                 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-lift"
+                 bg-ink-800 shadow-card ring-1 ring-white/10 transition-[transform,box-shadow] duration-500
+                 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-lift active:brightness-50"
       style={{ ['--accent' as string]: meta.accent }}
     >
       {/* Image */}
@@ -61,6 +66,17 @@ export default function GalleryCard({ club, onClick }: GalleryCardProps) {
           {meta.en}
         </span>
       </div>
+
+      {/* Rating badge */}
+      {club.rating && (
+        <div className="absolute right-3 top-3 z-10">
+          <img
+            src={asset(RATING_IMG[club.rating])}
+            alt={club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+            className="h-14 w-14 object-contain drop-shadow-md"
+          />
+        </div>
+      )}
 
       {/* Content */}
       <div className="absolute inset-x-0 bottom-0 z-10 p-4">

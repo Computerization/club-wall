@@ -259,8 +259,8 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 group-hover:opacity-100"
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 group-hover:opacity-100 active:brightness-50"
           aria-label="向左滑动"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -308,8 +308,8 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-all duration-300
-                     hover:scale-110 group-hover:opacity-100"
+                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 group-hover:opacity-100 active:brightness-50"
           aria-label="向右滑动"
         >
           <ChevronRight className="h-5 w-5" />

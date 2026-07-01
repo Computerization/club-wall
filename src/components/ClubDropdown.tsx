@@ -66,7 +66,7 @@ export default function ClubDropdown({ clubs, onClubClick }: ClubDropdownProps) 
                   key={club.id}
                   onClick={() => onClubClick(club.id)}
                   className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs
-                             text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
+                             text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white active:bg-white/10"
                 >
                   <span
                     className="h-1.5 w-1.5 shrink-0 rounded-full"

@@ -15,7 +15,7 @@ export interface CategoryMeta {
  * Per-category presentation metadata. Each category gets its own accent so the
  * gallery reads as a curated, color-coded wall rather than a flat list.
  */
-export const categoryMeta: Record<Category, CategoryMeta> = {
+export const categoryMeta: Record<string, CategoryMeta> = {
   Sports: {
     en: 'Sports',
     cn: '运动',

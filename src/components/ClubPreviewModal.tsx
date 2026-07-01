@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
 import { X, ArrowRight, Sparkles } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc } from '../data/clubs';
+import { clubImageSrc, asset } from '../data/clubs';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
+
+const RATING_IMG: Record<string, string> = {
+  'five-star': 'icons/five-star-club.png',
+  outstanding: 'icons/good-club.png',
+};
 
 interface ClubPreviewModalProps {
   club: Club | null;
@@ -111,10 +116,18 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
             </p>
           )}
 
+          {club.rating && (
+            <img
+              src={asset(RATING_IMG[club.rating])}
+              alt={club.rating === 'five-star' ? '五星社团' : '优秀社团'}
+              className="mt-4 h-14 w-auto object-contain self-start"
+            />
+          )}
+
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             <button
               onClick={() => onOpenFull(club.id)}
-              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.03] active:brightness-50"
               style={{ background: meta.accent }}
             >
               查看完整详情
@@ -130,7 +143,7 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
         <button
           onClick={onClose}
           aria-label="Close preview"
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white active:brightness-50"
         >
           <X className="h-4.5 w-4.5" />
         </button>
