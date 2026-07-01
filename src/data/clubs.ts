@@ -112,7 +112,7 @@ export const clubs: Club[] = [
   { id: "70", name: "食品研究社", category: "Academic", shortDesc: "Food Science", tags: ["美食", "健康", "食品安全", "食品化学"], description: "我们欢迎任何对食品感兴趣的同学，组件世外老吃家天堂。社长微信号：enehaodeo", image: "/covers/b13.jpg", posters: ["/posters/f67-1.jpg"], qrcodes: ["/qrcodes/f67-1.png"], posterHtml: "", contact: "" },
   { id: "71", name: "WFLA数学社", category: "Academic", shortDesc: "Math", tags: ["数学", "思维", "竞赛", "钻研"], description: "数学基础和竞赛水平并不是玩转数学的必要条件；只要你对数学保有好奇和热情，WFLA数学社都欢迎你的加入！无论是讨论竞赛技巧与趣味题目，亦或探索高等数学和深层理论，这里都有你的一席之地！", image: "/covers/b6.jpg", posters: ["/posters/b6-1.jpg"], qrcodes: [], posterHtml: "", contact: "" },
   { id: "72", name: "生物社", category: "Academic", shortDesc: "Biology", tags: ["生命", "实验", "观察", "探究"], description: "从细胞到生态，一起探索生命科学的奇妙。", image: "/covers/f54.jpg", posters: ["/posters/f54-1.jpg"], qrcodes: ["/qrcodes/f54-1.png"], posterHtml: "", contact: "", rating: "five-star" },
-  { id: "73", name: "沪语弄堂", category: "Academic", shortDesc: "Shanghainese", tags: ["语言", "文化", "上海", "传承"], description: "来沪语弄堂，深入聚焦上海语言与文化，向内激发兴趣、深入理解，向外推广沪语文化，为拯救沪语出力！", image: "/covers/b8.jpg", posters: ["/posters/b8-1.jpg"], qrcodes: ["/qrcodes/shanghainese.jpg"], posterHtml: "", contact: "微信: wuwh0118" },
+  { id: "73", name: "沪语弄堂", category: "Academic", shortDesc: "Shanghainese", tags: ["语言", "文化", "上海", "传承"], description: "低门槛，高深度！来沪语弄堂，深入聚焦上海语言与文化，感受沪语魅力，向内激发兴趣、深入理解，向外推广沪语文化，为拯救沪语出力！", image: "/covers/b8.jpg", posters: ["/posters/shanghainese.jpg"], qrcodes: ["/qrcodes/shanghainese.jpg"], posterHtml: "", contact: "微信: wuwh0118" },
   // ClubsToBeEstablished:
   // In: 沪语弄堂、绅士台球社、匹克球社
   // Out: 阈限空间、链接实验室、气象社
