@@ -223,8 +223,6 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
       >
         {/* Slides track */}
         <div className="relative overflow-hidden rounded-2xl">
-          {/* Gradient fades */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-ink-950 to-transparent" />
           <div
             ref={containerRef}
             onScroll={handleScroll}
