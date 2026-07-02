@@ -60,7 +60,7 @@ export default function Header({ searchQuery, onSearchChange, onSearchKeyDown, m
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-3 sm:px-6">
         {/* Wordmark */}
         <div className="flex shrink-0 items-center gap-2">
-          <a href="/" className="flex items-center gap-2.5 active:brightness-50">
+          <a href="/club-wall/" className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg ring-1"
               style={{
                 backgroundColor: 'color-mix(in srgb, var(--theme-light) 15%, transparent)',
