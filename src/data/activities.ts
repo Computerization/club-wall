@@ -20,7 +20,7 @@ export interface Activity {
 }
 
 export const activities: Activity[] = [
-  {
+/*  {
     id: 'L1',
     title: '2026年度大戏',
     clubId: '15',
@@ -34,7 +34,7 @@ export const activities: Activity[] = [
     image: '/covers/kaleido-activity.png',
     color: '#C00000',
     detailType: 'html',
-  },
+  }, */
   {
     id: 'L2',
     title: 'FTC夏校',
@@ -49,7 +49,7 @@ export const activities: Activity[] = [
     image: '/covers/b7.jpg',
     color: '#C8BEA8',
   },
-  {
+/*  {
     id: 'L3',
     title: '第四届世外卡丁车赛',
     clubId: '44',
@@ -62,5 +62,5 @@ export const activities: Activity[] = [
     contact: '社长微信：1316986815\n活动地点：校外卡丁车赛场（具体位置将在报名后通知）',
     image: '/covers/f50.jpg',
     color: '#E90404',
-  },
+  },*/
 ];
