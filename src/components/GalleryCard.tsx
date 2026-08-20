@@ -1,7 +1,8 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc, asset } from '../data/clubs';
+import { asset } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+import ClubCover from './ClubMedia';
 
 const RATING_IMG: Record<string, string> = {
   'five-star': 'icons/five-star-club.png',
@@ -21,7 +22,6 @@ interface GalleryCardProps {
  */
 export default function GalleryCard({ club, onClick }: GalleryCardProps) {
   const meta = getCategoryMeta(club.category);
-  const src = clubImageSrc(club);
 
   return (
     <article
@@ -32,20 +32,11 @@ export default function GalleryCard({ club, onClick }: GalleryCardProps) {
       style={{ ['--accent' as string]: meta.accent }}
     >
       {/* Image */}
-      {src ? (
-        <img
-          src={src}
-          alt={club.name}
-          loading="lazy"
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-cover transition-transform
-                     duration-700 ease-out group-hover:scale-110"
-        />
-      ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-sm text-white/40">
-          {club.name}
-        </div>
-      )}
+      <ClubCover
+        club={club}
+        className="absolute inset-0 h-full w-full object-cover transition-transform
+                   duration-700 ease-out group-hover:scale-110"
+      />
 
       {/* Cinematic scrim */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/10 transition-opacity duration-500 group-hover:from-black/95" />

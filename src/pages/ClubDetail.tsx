@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Footer from '../components/Footer';
 import { useClub, useClubIdParam, useClubNavigation } from '../hooks/useClub';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
-import { asset, clubImageSrc } from '../data/clubs';
+import { asset } from '../data/clubs';
 import type { Club } from '../data/clubs';
+import ClubCover, { ClubPoster, ClubCpQrcodeSection, ClubLogo } from '../components/ClubMedia';
 
 const RATING_IMG: Record<string, string> = {
   'five-star': 'icons/five-star-club.png',
@@ -12,77 +13,16 @@ const RATING_IMG: Record<string, string> = {
 };
 import { useLocation } from 'react-router-dom';
 
-function BackButton({ onClick }: { onClick: () => void }) {
+function BackButton({ onClick, accent }: { onClick: () => void; accent: string }) {
   return (
     <button
       onClick={onClick}
-      className="mb-8 inline-flex items-center gap-2 text-sm text-brand-light transition-colors hover:text-white active:brightness-50"
+      className="mb-8 inline-flex items-center gap-2 text-sm transition-colors hover:text-white active:brightness-50"
+      style={{ color: accent }}
     >
       <ArrowLeft className="h-4 w-4" />
       <span className="font-medium">返回 Back</span>
     </button>
-  );
-}
-
-// Embeds a generated HTML poster. The poster is width-fluid and content-height,
-// so we measure its document height (same-origin, served from our own domain)
-// and grow the iframe to match — no inner scrollbar, matches the image posters.
-function PosterFrame({ src, title }: { src: string; title: string }) {
-  const ref = useRef<HTMLIFrameElement>(null);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    const iframe = ref.current;
-    if (!iframe) return;
-
-    let observer: ResizeObserver | null = null;
-
-    const measure = () => {
-      const body = iframe.contentDocument?.body;
-      if (!body) return;
-      // documentElement.scrollHeight is floored at the iframe's own viewport
-      // height, so a poster shorter than the placeholder aspect-ratio would lock
-      // in that inflated height (leaving a gap below). The body's content box is
-      // not viewport-clamped, so it reports the poster's true height either way.
-      const h = Math.ceil(body.getBoundingClientRect().height);
-      if (h) setHeight(h);
-    };
-
-    const onLoad = () => {
-      measure();
-      const body = iframe.contentDocument?.body;
-      if (body && 'ResizeObserver' in window) {
-        observer = new ResizeObserver(measure);
-        observer.observe(body);
-      }
-    };
-
-    iframe.addEventListener('load', onLoad);
-    // Already loaded (e.g. cached) before the listener attached.
-    if (iframe.contentDocument?.readyState === 'complete') onLoad();
-
-    return () => {
-      iframe.removeEventListener('load', onLoad);
-      observer?.disconnect();
-    };
-  }, [src]);
-
-  return (
-    <iframe
-      ref={ref}
-      src={src}
-      title={title}
-      loading="lazy"
-      scrolling="no"
-      // Before the first measure lands, hold a poster-like ratio so the layout
-      // doesn't jump; once measured we switch to the exact content height.
-      style={
-        height
-          ? { height: `${height}px`, border: 0, display: 'block' }
-          : { aspectRatio: '3 / 4', border: 0, display: 'block' }
-      }
-      className="w-full rounded-2xl shadow-lift ring-1 ring-white/10"
-    />
   );
 }
 
@@ -103,35 +43,29 @@ function NotFound({ onGoHome }: { onGoHome: () => void }) {
 
 function ClubHeader({ club }: { club: Club }) {
   const meta = getCategoryMeta(club.category);
-  const src = clubImageSrc(club);
+  const accent = club.theme[0];
 
   return (
     <div className="relative overflow-hidden rounded-3xl shadow-lift ring-1 ring-white/10">
       <div className="relative h-72 w-full sm:h-96">
-        {src ? (
-          <img src={src} alt={club.name} className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-white/40">
-            {club.name}
-          </div>
-        )}
+        <ClubCover club={club} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-      </div>
 
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-        <div
-          className="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider"
-          style={{ color: meta.accent, border: `1px solid ${meta.accent}`, background: 'rgba(0,0,0,0.4)' }}
-        >
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: meta.accent }} />
-          {meta.en} · {meta.cn}
+        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
+          <div
+            className="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider"
+            style={{ color: accent, border: `1px solid ${accent}`, background: 'rgba(0,0,0,0.4)' }}
+          >
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: accent }} />
+            {meta.en} · {meta.cn}
+          </div>
+          <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-6xl">
+            {club.name}
+          </h1>
+          <p className="mt-2 text-sm font-medium uppercase tracking-[0.18em]" style={{ color: accent }}>
+            {club.shortDesc}
+          </p>
         </div>
-        <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-6xl">
-          {club.name}
-        </h1>
-        <p className="mt-2 text-sm font-medium uppercase tracking-[0.18em]" style={{ color: meta.accent }}>
-          {club.shortDesc}
-        </p>
       </div>
     </div>
   );
@@ -148,12 +82,29 @@ export default function ClubDetail() {
     ? () => window.history.back()
     : goHome;
   const meta = club ? getCategoryMeta(club.category) : null;
+  const accent = club ? club.theme[0] : null;
+
+  // Apply the club's logo theme to the page (background, accents, scrollbar)
+  // by overriding the global CSS variables while this page is mounted.
+  useEffect(() => {
+    if (!club) return;
+    const [light, main, dark] = club.theme;
+    const root = document.documentElement;
+    root.style.setProperty('--theme-light', light);
+    root.style.setProperty('--theme', main);
+    root.style.setProperty('--theme-dark', dark);
+    return () => {
+      root.style.removeProperty('--theme-light');
+      root.style.removeProperty('--theme');
+      root.style.removeProperty('--theme-dark');
+    };
+  }, [club]);
 
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 px-6 py-10">
         <div className="mx-auto max-w-4xl">
-          <BackButton onClick={handleBack} />
+          <BackButton onClick={handleBack} accent={accent ?? 'var(--theme-light)'} />
           {club ? (
             <div className="animate-fade-up">
               <ClubHeader club={club} />
@@ -161,7 +112,7 @@ export default function ClubDetail() {
               {/* Intro */}
               <div className="mt-10 grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2">
-                  <h3 className="eyebrow mb-3 text-xs font-semibold" style={{ color: meta?.accent }}>
+                  <h3 className="eyebrow mb-3 text-xs font-semibold" style={{ color: accent ?? undefined }}>
                     关于社团 · About
                   </h3>
                   <p className="text-base leading-relaxed text-white/75">
@@ -173,7 +124,7 @@ export default function ClubDetail() {
                         <span
                           key={tag}
                           className="rounded-full px-3 py-1 text-sm text-white/80"
-                          style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${meta?.accent}40` }}
+                          style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${accent}40` }}
                         >
                           {tag}
                         </span>
@@ -181,34 +132,22 @@ export default function ClubDetail() {
                     </div>
                   )}
 
-                  {/* The club's own recruitment poster, shown full so it's readable.
-                      Either a generated HTML poster (iframe) or submitted images. */}
-                  {(club.posterHtml || club.posters.length > 0) && (
-                    <div className="mt-8">
-                      <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: meta?.accent }}>
-                        招新海报 · Poster
-                      </h3>
-                      <div className="flex flex-col gap-6">
-                        {club.posterHtml && (
-                          <PosterFrame src={asset(club.posterHtml)} title={`${club.name} 招新海报`} />
-                        )}
-                        {club.posters.map((poster, i) => (
-                          <img
-                            key={poster}
-                            src={asset(poster)}
-                            alt={`${club.name} 海报 ${i + 1}`}
-                            className="w-full rounded-2xl shadow-lift ring-1 ring-white/10"
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* The club's own recruitment poster, resolved automatically from
+                      public/posters/{id}.jpg (falls back to a placeholder if absent). */}
+                  <div className="mt-8">
+                    <h3 className="eyebrow mb-4 text-xs font-semibold" style={{ color: accent ?? undefined }}>
+                      招新海报 · Poster
+                    </h3>
+                    <ClubPoster club={club} />
+                  </div>
                 </div>
 
-                <aside className="glass self-start rounded-2xl p-5">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
-                    信息 · Info
-                  </h3>
+                <div className="flex flex-col">
+                  <div className="mb-6 text-center">
+                    <ClubLogo club={club} className="mx-auto w-3/4 max-w-[200px] object-contain" />
+                    <p className="mt-2 text-xs text-white/40">{club.name} logo</p>
+                  </div>
+                  <aside className="glass w-full rounded-2xl p-5">
                   {club.rating && (
                     <div className="mb-4 flex items-center gap-2">
                       <img
@@ -221,6 +160,7 @@ export default function ClubDetail() {
                       </span>
                     </div>
                   )}
+                  {club.rating && <div className="my-4 border-t border-white/5" />}
                   <dl className="space-y-3 text-sm">
                     <div>
                       <dt className="text-white/40">领域 Category</dt>
@@ -230,6 +170,19 @@ export default function ClubDetail() {
                       <dt className="text-white/40">方向 Focus</dt>
                       <dd className="text-white">{club.shortDesc}</dd>
                     </div>
+                    <div className="my-4 border-t border-white/5" />
+                    {club.president?.trim() && (
+                      <div>
+                        <dt className="text-white/40">社长 President</dt>
+                        <dd className="text-white">{club.president}</dd>
+                      </div>
+                    )}
+                    {club.vicePresidents.length > 0 && (
+                      <div>
+                        <dt className="text-white/40">副社长 Vice Presidents</dt>
+                        <dd className="text-white">{club.vicePresidents.join('、')}</dd>
+                      </div>
+                    )}
                     {club.contact?.trim() && (
                       <div>
                         <dt className="text-white/40">微信 Contact</dt>
@@ -238,42 +191,9 @@ export default function ClubDetail() {
                     )}
                   </dl>
 
-                  {club.qrcodes.length > 0 && (
-                    <div className="mt-5 border-t border-white/10 pt-5">
-                      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
-                        扫码进群 · Join Group
-                      </h3>
-                      <div className="flex flex-col gap-3">
-                        {club.qrcodes.map((qr, i) => (
-                          <img
-                            key={qr}
-                            src={asset(qr)}
-                            alt={`${club.name} 招新群二维码 ${i + 1}`}
-                            className="w-full rounded-lg bg-white p-2"
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {club.cpQrcodes.length > 0 && (
-                    <div className="mt-5 border-t border-white/10 pt-5">
-                      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
-                        社长微信 · Club President
-                      </h3>
-                      <div className="flex flex-col gap-3">
-                        {club.cpQrcodes.map((qr, i) => (
-                          <img
-                            key={qr}
-                            src={asset(qr)}
-                            alt={`${club.name} 社长微信 ${i + 1}`}
-                            className="w-full rounded-lg bg-white p-2"
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </aside>
+                  <ClubCpQrcodeSection club={club} />
+                  </aside>
+                </div>
               </div>
             </div>
           ) : (

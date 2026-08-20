@@ -35,7 +35,7 @@ export const activities: Activity[] = [
     color: '#C00000',
     detailType: 'html',
   }, */
-  {
+/*  {
     id: 'L2',
     title: 'FTC夏校',
     clubId: '66',
@@ -48,7 +48,7 @@ export const activities: Activity[] = [
     contact: '联系人：17321347559 / 19901646246\n活动地点：极客工坊活动教室（科技楼3楼）',
     image: '/covers/b7.jpg',
     color: '#C8BEA8',
-  },
+  }, */
 /*  {
     id: 'L3',
     title: '第四届世外卡丁车赛',

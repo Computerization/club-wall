@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { X, ArrowRight, Sparkles } from 'lucide-react';
 import type { Club } from '../data/clubs';
-import { clubImageSrc, asset } from '../data/clubs';
+import { asset } from '../data/clubs';
 import { clubBlurb, getCategoryMeta } from '../data/categoryMeta';
+import ClubCover from './ClubMedia';
 
 const RATING_IMG: Record<string, string> = {
   'five-star': 'icons/five-star-club.png',
@@ -39,7 +40,6 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
   if (!club) return null;
 
   const meta = getCategoryMeta(club.category);
-  const src = clubImageSrc(club);
 
   return (
     <div
@@ -62,17 +62,10 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
             image's aspect ratio, so the cover fills its box edge-to-edge with no
             cropping and no bands. */}
         <div className="relative flex shrink-0 items-center justify-center">
-          {src ? (
-            <img
-              src={src}
-              alt={club.name}
-              className="block mx-auto w-auto max-h-[45vh] max-w-full md:mx-0 md:h-[480px] md:max-h-none md:max-w-none"
-            />
-          ) : (
-            <div className="flex h-56 w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-900 text-white/40 md:h-[480px] md:w-72">
-              {club.name}
-            </div>
-          )}
+          <ClubCover
+            club={club}
+            className="block mx-auto w-auto max-h-[45vh] max-w-full md:mx-0 md:h-[480px] md:max-h-none md:max-w-none"
+          />
         </div>
 
         {/* Detail side — matches the cover's fixed height and scrolls internally. */}

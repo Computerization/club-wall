@@ -1,7 +1,6 @@
 import { ChevronDown, Shuffle } from 'lucide-react';
 
 interface HeroProps {
-  clubCount: number;
   categoryCount: number;
   /** Opens a randomly chosen club in the preview modal. */
   onRandomClub: () => void;
@@ -13,7 +12,7 @@ interface HeroProps {
  * Full-viewport, editorial opening for the wall. Sets the tone — immersive,
  * premium, alive — before the gallery rows begin.
  */
-export default function Hero({ clubCount, categoryCount, onRandomClub, hideRandom = false }: HeroProps) {
+export default function Hero({ categoryCount, onRandomClub, hideRandom = false }: HeroProps) {
   return (
     <section className="relative flex min-h-[88vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       {/* Floating ambient orbs */}
@@ -44,8 +43,7 @@ export default function Hero({ clubCount, categoryCount, onRandomClub, hideRando
 
       {/* Stats */}
       <div className="mt-10 flex animate-fade-up delay-500 items-center gap-8 sm:gap-12">
-        {/* Round down to a clean marketing figure (e.g. 73 clubs → "70+"). */}
-        <Stat value={`${Math.floor(clubCount / 10) * 10}+`} label="社团 Clubs" />
+        <Stat value="77" label="社团 Clubs" />
         <div className="h-10 w-px bg-white/15" />
         <Stat value={`${categoryCount}`} label="领域 Categories" />
         <div className="h-10 w-px bg-white/15" />

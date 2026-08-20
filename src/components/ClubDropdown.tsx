@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { pinyin } from 'pinyin-pro';
 import type { Club } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+import { asset } from '../data/clubs';
 
 function getGroupKey(name: string): string {
   const first = name.charAt(0);
@@ -13,6 +14,26 @@ function getGroupKey(name: string): string {
 
 function isEnglishStart(name: string): boolean {
   return /[A-Za-z]/.test(name.charAt(0));
+}
+
+// Shows the club's logo thumbnail; if the logo file is missing (or fails to
+// load), falls back to a gray translucent circle (same size) to indicate there
+// is no logo.
+function ClubDot({ club }: { club: Club }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return <span className="h-5 w-5 shrink-0 rounded-full bg-neutral-800/90" />;
+  }
+
+  return (
+    <img
+      src={asset(`/logos/${club.id.padStart(2, '0')}.png`)}
+      alt=""
+      className="h-5 w-5 shrink-0 rounded-full object-cover"
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 interface ClubDropdownProps {
@@ -68,10 +89,7 @@ export default function ClubDropdown({ clubs, onClubClick }: ClubDropdownProps) 
                   className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs
                              text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white active:bg-white/10"
                 >
-                  <span
-                    className="h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ background: meta.accent }}
-                  />
+                  <ClubDot club={club} />
                   <span className="truncate">{club.name}</span>
                   <span className="ml-auto shrink-0 text-[10px] font-medium uppercase tracking-wider text-white/25">
                     {meta.en}
