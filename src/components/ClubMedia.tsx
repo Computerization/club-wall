@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Club } from '../data/clubs';
 import { asset } from '../data/clubs';
 
-// Club media (cover + poster) is loaded dynamically from public/{folder}/{id}.jpg
+// Club media (logo + poster) is loaded dynamically from public/{folder}/{id}.jpg
 // (id zero-padded to two digits). Uploading a matching file is enough — no code
 // change needed. Each component walks down its list of candidate sources in
 // order and, when a file is missing (img onError), advances to the next one.
@@ -42,12 +42,12 @@ interface ClubMediaProps {
   alt?: string;
 }
 
-// Cover falls back to the club's poster (if submitted), then to the placeholder.
+// Cover uses the club's logo as the primary image, then falls back to the placeholder.
 export default function ClubCover({ club, className, alt }: ClubMediaProps) {
   return (
     <ClubImage
       club={club}
-      sources={(id) => [`/covers/${id}.jpg`, `/posters/${id}.jpg`, '/covers/no-cover.jpg']}
+      sources={(id) => [`/logos/${id}.png`, `/logos/${id}.jpg`, '/logos/no-logo.png']}
       alt={alt ?? club.name}
       className={className}
     />

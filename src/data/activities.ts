@@ -38,7 +38,7 @@ export const activities: Activity[] = [
 /*  {
     id: 'L2',
     title: 'FTC夏校',
-    clubId: '66',
+    clubId: '65',
     clubName: '极客工坊 E3 Lab',
     shortDesc: 'FTC通识课，对这个比赛感兴趣的同学可以参加',
     description:

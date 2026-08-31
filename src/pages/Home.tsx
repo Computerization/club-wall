@@ -277,6 +277,7 @@ export default function Home() {
         ) : (
           <>
             <Hero
+              clubCount={clubs.length}
               categoryCount={categories.length}
               onRandomClub={openRandomClub}
               hideRandom={eggActive}
