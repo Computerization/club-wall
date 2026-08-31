@@ -2,15 +2,15 @@ import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Club } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
-import GalleryCard from './GalleryCard';
+import ClubLogoItem from './ClubLogoItem';
 
 // ============== Tuning constants ==============
-// Desktop poster tiles are square; on narrow phones we switch to a smaller,
-// portrait card so more than one is visible at a time in the marquee.
+// Desktop logo tiles are square; on narrow phones we use a slightly smaller
+// square so more than one is visible at a time in the marquee.
 const CARD_WIDTH = 340;
 const CARD_HEIGHT = 340;
 const MOBILE_CARD_WIDTH = 220;
-const MOBILE_CARD_HEIGHT = 300;
+const MOBILE_CARD_HEIGHT = 220;
 const MOBILE_BREAKPOINT = '(max-width: 639px)';
 const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
@@ -240,13 +240,13 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
         />
       </div>
 
-      {/* Tiled grid: cards wrap and stack downward, no scrolling. */}
+      {/* Tiled grid: logos wrap and stack downward, no scrolling. */}
       {tiled ? (
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
             {clubs.map((club) => (
               <div key={club.id} className="aspect-square">
-                <GalleryCard club={club} onClick={onClubClick} />
+                <ClubLogoItem club={club} onClick={onClubClick} />
               </div>
             ))}
           </div>
@@ -297,7 +297,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
                 style={{ width: card.w, height: card.h }}
                 className="shrink-0"
               >
-                <GalleryCard club={club} onClick={handleCardClick} />
+                <ClubLogoItem club={club} onClick={handleCardClick} />
               </div>
             ))}
           </div>
