@@ -98,9 +98,9 @@ export default function ActivityDetailHTML(_props: Props) {
     root.style.setProperty('--theme', '#C00000');
     root.style.setProperty('--theme-dark', '#600000');
     return () => {
-      root.style.setProperty('--theme-light', '#2dd4a7');
-      root.style.setProperty('--theme', '#1A5F4A');
-      root.style.setProperty('--theme-dark', '#0f3d2f');
+      root.style.setProperty('--theme-light', '#FFA45E');
+      root.style.setProperty('--theme', '#FA803D');
+      root.style.setProperty('--theme-dark', '#8A3B0E');
     };
   }, []);
 

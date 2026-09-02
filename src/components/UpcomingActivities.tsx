@@ -207,10 +207,10 @@ export default function UpcomingActivities({ clubIds }: UpcomingActivitiesProps 
           <span className="eyebrow text-[11px] font-semibold" style={{ color: 'var(--theme-light)', transition: 'color 0.6s ease' }}>
             活动 · {String(total).padStart(2, '0')}
           </span>
-          <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="mt-1 font-display text-3xl font-bold text-home-head sm:text-4xl">
             Upcoming Activities
           </h2>
-          <p className="mt-1 text-sm text-white/45">近期即将举行的社团活动</p>
+          <p className="mt-1 text-sm text-home-mut">近期即将举行的社团活动</p>
         </div>
         <span className="hidden h-12 w-1 rounded-full sm:block" style={{ background: 'linear-gradient(var(--theme-light), transparent)', transition: '--theme-light 0.6s ease' }} />
       </div>

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Shuffle, Play, Pause } from 'lucide-react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { ArrowLeft, Shuffle, LayoutGrid, Columns } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Hero from '../components/Hero';
@@ -8,7 +8,8 @@ import ClubList from '../components/ClubList';
 import ClubPreviewModal from '../components/ClubPreviewModal';
 import UpcomingActivities from '../components/UpcomingActivities';
 import { useClubNavigation } from '../hooks/useClub';
-import { categories, clubs } from '../data/clubs';
+import { categories, clubs, asset } from '../data/clubs';
+import { getSchoolListing } from '../data/schoolNames';
 import type { Club, Rating } from '../data/clubs';
 import { pickWeightedClub } from '../data/clubWeights';
 
@@ -40,12 +41,63 @@ export default function Home() {
   const evadeRef = useRef<HTMLButtonElement>(null);
   const [evadePos, setEvadePos] = useState({ x: 0, y: 0 });
 
+  // Light/dark: default to the system/browser preference, manually togglable.
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem('cw-theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch { /* ignore */ }
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
+  // Apply before first paint. Only a manual toggle is persisted, so a fresh
+  // load (no stored choice) always follows the system/browser preference.
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    // Suppress per-element colour transitions so the whole page flips together.
+    const el = document.documentElement;
+    el.classList.add('no-theme-anim');
+    window.setTimeout(() => el.classList.remove('no-theme-anim'), 700);
+    setTheme((t) => {
+      const next = t === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('cw-theme', next);
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+  // Reveal the floating corner controls after passing the hero.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 400);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Page background: like the dark design but with black↔white swapped —
+  // a soft theme-glow wash over a white (light) / near-black (dark) base.
+  const pageStyle: React.CSSProperties =
+    theme === 'dark'
+      ? {
+          backgroundImage: [
+            'radial-gradient(1000px 560px at 12% -10%, rgba(250,128,61,0.16), transparent 60%)',
+            'radial-gradient(800px 480px at 100% 0%, rgba(226,99,30,0.16), transparent 55%)',
+            'radial-gradient(900px 600px at 50% 120%, rgba(250,128,61,0.08), transparent 60%)',
+          ].join(', '),
+          backgroundColor: '#0a0f0d',
+        }
+      : {
+          backgroundImage: [
+            'radial-gradient(1000px 560px at 12% -10%, rgba(250,128,61,0.10), transparent 60%)',
+            'radial-gradient(800px 480px at 100% 0%, rgba(226,99,30,0.10), transparent 55%)',
+            'radial-gradient(900px 600px at 50% 120%, rgba(250,128,61,0.05), transparent 60%)',
+          ].join(', '),
+          backgroundColor: '#ffffff',
+        };
 
   // While active, dodge the cursor whenever it gets close — biased toward the
   // screen centre so it doesn't just hug the edges.
@@ -119,6 +171,7 @@ export default function Home() {
     ? clubs.filter((club) =>
         club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         club.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (getSchoolListing(club)?.en ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         club.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : clubs;
@@ -166,16 +219,9 @@ export default function Home() {
 
   const ratedClubIds = useMemo(() => new Set(ratedClubs.map((c) => c.id)), [ratedClubs]);
 
-  // Randomize the category row order once per page load (Fisher-Yates), so the
-  // wall feels fresh on each refresh. The Forming row stays pinned at the bottom.
-  const orderedCategories = useMemo(() => {
-    const arr = [...categories];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }, []);
+  // Categories render in the fixed order defined in `categories`. The Forming
+  // row stays pinned at the bottom.
+  const orderedCategories = categories;
 
   // Rendered as its own row below the auto-scrolling categories; `categories`
   // intentionally excludes this group so it only appears here, statically.
@@ -185,6 +231,12 @@ export default function Home() {
     if (e.key === 'Enter') {
       setSearchQuery(inputValue);
     }
+  };
+
+  // Live search: every keystroke re-runs the filter.
+  const handleSearchChange = (value: string) => {
+    setInputValue(value);
+    setSearchQuery(value);
   };
 
   const handleBack = () => {
@@ -220,15 +272,18 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col" style={pageStyle}>
       <Header
         searchQuery={inputValue}
-        onSearchChange={setInputValue}
+        onSearchChange={handleSearchChange}
         onSearchKeyDown={handleSearchKeyDown}
         minimal={isSearching}
         onClubClick={openPreview}
         ratingFilter={ratingFilter}
         onRatingFilter={setRatingFilter}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        headerMode={theme === 'light' ? 'light' : 'dark'}
       />
 
       <main className="flex-1">
@@ -242,17 +297,17 @@ export default function Home() {
                 <ArrowLeft className="h-4 w-4" />
                 <span>返回 Back</span>
               </button>
-              <h2 className="font-display text-3xl font-bold text-white">
+              <h2 className="font-display text-3xl font-bold text-home-head">
                 Search
               </h2>
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-sm text-home-mut">
                 {filteredClubs.length} 个社团匹配 "{searchQuery}"
               </p>
             </div>
             {filteredClubs.length > 0 ? (
               <ClubList clubs={filteredClubs} onClubClick={openPreview} />
             ) : (
-              <div className="py-24 text-center text-lg text-white/40">
+              <div className="py-24 text-center text-lg text-home-mut">
                 未找到匹配的社团 · No clubs found
               </div>
             )}
@@ -263,10 +318,17 @@ export default function Home() {
             {ratedByRating.map((group) => (
               <section key={group.rating} className="py-8">
                 <div className="mx-auto max-w-7xl px-6 mb-5">
-                  <h2 className="font-display text-2xl font-bold text-white">
-                    {group.label}
-                  </h2>
-                  <p className="mt-1 text-sm text-white/50">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={asset(group.rating === 'five-star' ? 'icons/five-star-club.png' : 'icons/good-club.png')}
+                      alt=""
+                      className="h-7 w-auto object-contain"
+                    />
+                    <h2 className="font-display text-4xl font-extrabold text-home-head">
+                      {group.label}
+                    </h2>
+                  </div>
+                  <p className="mt-1 text-sm text-home-mut">
                     {group.clubs.length} 个社团
                   </p>
                 </div>
@@ -315,24 +377,27 @@ export default function Home() {
         )}
       </main>
 
-      <Footer />
+      <Footer light={theme === 'light'} />
 
       {/* Floating corner controls — always on top, bottom-right. Only meaningful
           on the gallery view (hidden while searching) and revealed once the user
-          scrolls past the hero. Each button is positioned independently so the
-          animation toggle stays put even when the random button turns evasive. */}
+          scrolls past the hero. Each starts as a plain circle and expands its
+          label on hover; hover pops like the gallery logos, press shrinks. */}
       {!isSearching && !isRatingActive && (
         <button
           onClick={() => setTiled((t) => !t)}
           aria-pressed={tiled}
-          title={tiled ? '启用滚动动画' : '禁用滚动动画'}
-          className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold
-                     text-white shadow-lift transition-[transform,opacity] duration-300 hover:scale-105 active:brightness-50
-                     ${scrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}
-                     ${tiled ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-red-500 hover:bg-red-400'}`}
+          title={tiled ? '滚动模式' : '画廊模式'}
+          className={`group fixed bottom-6 right-6 z-50 flex h-12 items-center overflow-hidden rounded-full bg-brand-light text-white shadow-lift
+                     transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-110 hover:bg-brand active:scale-95 active:duration-100
+                     ${scrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}`}
         >
-          {tiled ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-          <span>{tiled ? '启用动画' : '禁用动画'}</span>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center">
+            {tiled ? <Columns className="h-5 w-5" /> : <LayoutGrid className="h-5 w-5" />}
+          </span>
+          <span className="w-max max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:mr-5 group-hover:max-w-[12rem] group-hover:opacity-100">
+            {tiled ? '滚动模式' : '画廊模式'}
+          </span>
         </button>
       )}
 
@@ -342,12 +407,14 @@ export default function Home() {
           ref={restRef}
           onClick={openRandomClub}
           style={{ bottom: RANDOM_BOTTOM }}
-          className={`fixed right-6 z-50 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold
-                     text-ink-900 shadow-lift transition-[transform,opacity] duration-300 hover:scale-105 hover:bg-brand-light hover:text-white active:brightness-50
+          className={`group fixed right-6 z-50 flex h-12 items-center overflow-hidden rounded-full bg-white text-ink-900 shadow-lift
+                     transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-110 hover:bg-brand-light hover:text-white active:scale-95 active:duration-100
                      ${scrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}`}
         >
-          <Shuffle className="h-4 w-4" />
-          <span>随机社团</span>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center"><Shuffle className="h-5 w-5" /></span>
+          <span className="w-max max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:mr-5 group-hover:max-w-[12rem] group-hover:opacity-100">
+            随机社团
+          </span>
         </button>
       )}
 
@@ -357,11 +424,13 @@ export default function Home() {
           ref={evadeRef}
           onClick={openRandomClub}
           style={{ left: evadePos.x, top: evadePos.y }}
-          className="fixed z-50 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold
-                     text-ink-900 shadow-lift transition-[left,top] duration-200 ease-out hover:bg-brand-light hover:text-white active:brightness-50"
+          className="group fixed z-50 flex h-12 items-center overflow-hidden rounded-full bg-white text-ink-900 shadow-lift
+                     transition-[left,top,transform,width,opacity] duration-200 ease-out hover:scale-110 hover:bg-brand-light hover:text-white active:scale-95"
         >
-          <Shuffle className="h-4 w-4" />
-          <span>随机社团</span>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center"><Shuffle className="h-5 w-5" /></span>
+          <span className="w-max max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:mr-5 group-hover:max-w-[12rem] group-hover:opacity-100">
+            随机社团
+          </span>
         </button>
       )}
 

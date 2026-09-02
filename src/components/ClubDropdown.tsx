@@ -19,11 +19,11 @@ function isEnglishStart(name: string): boolean {
 // Shows the club's logo thumbnail; if the logo file is missing (or fails to
 // load), falls back to a gray translucent circle (same size) to indicate there
 // is no logo.
-function ClubDot({ club }: { club: Club }) {
+function ClubDot({ club, light }: { club: Club; light: boolean }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
-    return <span className="h-5 w-5 shrink-0 rounded-full bg-neutral-800/90" />;
+    return <span className={`h-5 w-5 shrink-0 rounded-full ${light ? 'bg-black/10' : 'bg-neutral-800/90'}`} />;
   }
 
   return (
@@ -39,9 +39,11 @@ function ClubDot({ club }: { club: Club }) {
 interface ClubDropdownProps {
   clubs: Club[];
   onClubClick: (id: string) => void;
+  /** Dropdown sits on a light page (white/purple top) → use light skin. */
+  light?: boolean;
 }
 
-export default function ClubDropdown({ clubs, onClubClick }: ClubDropdownProps) {
+export default function ClubDropdown({ clubs, onClubClick, light = false }: ClubDropdownProps) {
   const groups = useMemo(() => {
     const map = new Map<string, Club[]>();
 
@@ -71,13 +73,19 @@ export default function ClubDropdown({ clubs, onClubClick }: ClubDropdownProps) 
   }, [clubs]);
 
   return (
-    <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg
-                    border border-white/10 bg-ink-900/95 backdrop-blur-xl shadow-lift">
+    <div
+      className={`absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border shadow-lift backdrop-blur-xl ${
+        light ? 'border-black/10 bg-white/70' : 'border-white/10 bg-ink-900/80'
+      }`}
+    >
       <div className="max-h-[55vh] overflow-y-auto overscroll-contain">
         {groups.map(({ key, items }) => (
           <div key={key}>
-            <div className="sticky top-0 bg-ink-900/90 px-3 pb-0.5 pt-1 text-[10px] font-semibold
-                            uppercase tracking-wider text-white/35 backdrop-blur-sm">
+            <div
+              className={`sticky top-0 px-3 pb-0.5 pt-1 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-md ${
+                light ? 'bg-white/55 text-black/55' : 'bg-ink-900/60 text-white/55'
+              }`}
+            >
               {key === '#' ? '#' : key}
             </div>
             {items.map((club) => {
@@ -86,12 +94,19 @@ export default function ClubDropdown({ clubs, onClubClick }: ClubDropdownProps) 
                 <button
                   key={club.id}
                   onClick={() => onClubClick(club.id)}
-                  className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs
-                             text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white active:bg-white/10"
+                  className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors active:opacity-80 ${
+                    light
+                      ? 'text-black/75 hover:bg-black/[0.05] hover:text-black'
+                      : 'text-white/75 hover:bg-white/[0.05] hover:text-white'
+                  }`}
                 >
-                  <ClubDot club={club} />
+                  <ClubDot club={club} light={light} />
                   <span className="truncate">{club.name}</span>
-                  <span className="ml-auto shrink-0 text-[10px] font-medium uppercase tracking-wider text-white/25">
+                  <span
+                    className={`ml-auto shrink-0 text-[10px] font-medium uppercase tracking-wider ${
+                      light ? 'text-black/35' : 'text-white/30'
+                    }`}
+                  >
                     {meta.en}
                   </span>
                 </button>

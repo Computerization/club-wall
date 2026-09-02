@@ -1,4 +1,4 @@
-import GalleryCard from './GalleryCard';
+import ClubLogoItem from './ClubLogoItem';
 import type { Club } from '../data/clubs';
 
 interface ClubListProps {
@@ -7,16 +7,16 @@ interface ClubListProps {
 }
 
 /**
- * Responsive gallery grid — used for search results. Reuses the same immersive
- * tile as the marquee rows so the whole site reads as one curated wall.
+ * Responsive gallery grid — used for search results and the 五星/优秀社团
+ * views. Uses the same logo + under-glow tiles as the homepage rows.
  */
 export default function ClubList({ clubs, onClubClick }: ClubListProps) {
   return (
     <section className="px-6 pb-16">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-4">
         {clubs.map((club) => (
           <div key={club.id} className="aspect-square animate-fade-up">
-            <GalleryCard club={club} onClick={onClubClick} />
+            <ClubLogoItem club={club} onClick={onClubClick} />
           </div>
         ))}
       </div>

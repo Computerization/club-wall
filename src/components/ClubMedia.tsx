@@ -61,7 +61,7 @@ export function ClubPoster({ club, className, alt }: ClubMediaProps) {
       club={club}
       sources={(id) => [`/posters/${id}.jpg`, '/posters/no-poster.png']}
       alt={alt ?? `${club.name} 招新海报`}
-      className={className ?? 'w-full rounded-2xl shadow-lift ring-1 ring-white/10'}
+      className={className ?? 'w-full rounded-xl ring-1 ring-white/10'}
     />
   );
 }
@@ -79,9 +79,10 @@ export function ClubCpQrcodeSection({ club }: ClubMediaProps) {
   if (failed) return null;
 
   return (
-    <div className="mt-5 border-t border-white/5 pt-4">
-      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
-        社长微信 · Club President
+    <div className="mt-5 border-t pt-4" style={{ borderColor: 'rgba(128,128,128,0.25)' }}>
+      <h3 className="mb-3 text-xs font-semibold text-white/50">
+        <span style={{ fontSize: '1.18em' }}>社长微信</span>{' '}
+        <span style={{ fontSize: '0.85em' }}>Club President</span>
       </h3>
       <div className="flex flex-col gap-3">
         <img

@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import type { Activity } from '../data/activities';
 
 const DEFAULTS = {
-  light: '#2dd4a7',
-  theme: '#1A5F4A',
-  dark: '#0f3d2f',
+  light: '#FFA45E',
+  theme: '#FA803D',
+  dark: '#8A3B0E',
 };
 
 function hexToRgb(hex: string): [number, number, number] {

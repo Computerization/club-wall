@@ -18,9 +18,9 @@ export interface CategoryMeta {
 export const categoryMeta: Record<string, CategoryMeta> = {
   Sports: {
     en: 'Sports',
-    cn: '运动',
+    cn: '体育',
     tagline: 'Move, compete, belong.',
-    accent: '#34d399',
+    accent: '#f97316',
   },
   Arts: {
     en: 'Arts',
@@ -44,7 +44,7 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     en: 'Academic',
     cn: '学术',
     tagline: 'Think deeper, reach further.',
-    accent: '#2dd4bf',
+    accent: '#f472b6',
   },
   ClubsToBeEstablished: {
     en: 'Forming',
@@ -58,7 +58,7 @@ const FALLBACK: CategoryMeta = {
   en: 'Clubs',
   cn: '社团',
   tagline: 'Discover your community.',
-  accent: '#2dd4a7',
+  accent: '#FA803D',
 };
 
 export function getCategoryMeta(category: string): CategoryMeta {

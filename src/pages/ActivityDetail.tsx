@@ -136,7 +136,7 @@ export default function ActivityDetail() {
     return <ActivityDetailHTML activity={activity} />;
   }
 
-  const color = activity?.color ?? '#2dd4a7';
+  const color = activity?.color ?? '#FFA45E';
 
   // Theme scrollbar to activity colour
   useEffect(() => {
@@ -146,9 +146,9 @@ export default function ActivityDetail() {
     root.style.setProperty('--theme', color);
     root.style.setProperty('--theme-dark', darkenHex(color, 0.6));
     return () => {
-      root.style.setProperty('--theme-light', '#2dd4a7');
-      root.style.setProperty('--theme', '#1A5F4A');
-      root.style.setProperty('--theme-dark', '#0f3d2f');
+      root.style.setProperty('--theme-light', '#FFA45E');
+      root.style.setProperty('--theme', '#FA803D');
+      root.style.setProperty('--theme-dark', '#8A3B0E');
     };
   }, [activity, color]);
 
@@ -217,7 +217,7 @@ export default function ActivityDetail() {
           )}
         </div>
       </main>
-      <Footer />
+      <Footer light={false} />
     </div>
   );
 }

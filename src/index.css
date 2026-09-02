@@ -7,17 +7,17 @@
 @property --theme-light {
   syntax: '<color>';
   inherits: true;
-  initial-value: #2dd4a7;
+  initial-value: #FA803D;
 }
 @property --theme {
   syntax: '<color>';
   inherits: true;
-  initial-value: #1A5F4A;
+  initial-value: #E2631E;
 }
 @property --theme-dark {
   syntax: '<color>';
   inherits: true;
-  initial-value: #0f3d2f;
+  initial-value: #7A3609;
 }
 
 @tailwind base;
@@ -27,9 +27,53 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --theme-light: #2dd4a7;
-    --theme: #1A5F4A;
-    --theme-dark: #0f3d2f;
+    --theme-light: #FA803D;
+    --theme: #E2631E;
+    --theme-dark: #7A3609;
+  }
+  /* Homepage surface tokens — default (dark) */
+  :root,
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --theme-light: #FA803D;
+    --theme: #E2631E;
+    --theme-dark: #7A3609;
+    --home-bg: #070b09;
+    --home-head: #ffffff;
+    --home-body: rgba(255, 255, 255, 0.8);
+    --home-mut: rgba(255, 255, 255, 0.6);
+    --g1: #ffffff;
+    --g2: #ffc9a0;
+    --g3: var(--theme-light, #FA803D);
+  }
+  :root[data-theme='light'] {
+    color-scheme: light;
+    --theme-light: #C2570F;
+    --theme: #E2631E;
+    --theme-dark: #8A3B0E;
+    --home-bg: #ffffff;
+    --home-head: #101a15;
+    --home-body: rgba(15, 28, 23, 0.84);
+    --home-mut: rgba(15, 28, 23, 0.62);
+    --g1: #7a2f08;
+    --g2: #e0732a;
+    --g3: var(--theme-light, #C2570F);
+  }
+  /* No stored choice → follow the system preference. */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      color-scheme: light;
+      --theme-light: #C2570F;
+      --theme: #E2631E;
+      --theme-dark: #8A3B0E;
+      --home-bg: #ffffff;
+      --home-head: #101a15;
+      --home-body: rgba(15, 28, 23, 0.84);
+      --home-mut: rgba(15, 28, 23, 0.62);
+      --g1: #7a2f08;
+      --g2: #e0732a;
+      --g3: var(--theme-light, #C2570F);
+    }
   }
 
   html {
@@ -38,8 +82,8 @@
 
   body {
     font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
-    color: #e8efe9;
-    background-color: #070b09;
+    color: var(--home-head, #e8efe9);
+    background-color: var(--home-bg, #070b09);
     background-image:
       radial-gradient(1200px 600px at 15% -10%, color-mix(in srgb, var(--theme-light) 14%, transparent), transparent 60%),
       radial-gradient(900px 500px at 100% 0%, color-mix(in srgb, var(--theme) 22%, transparent), transparent 55%),
@@ -47,6 +91,22 @@
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* The page viewport has no visible scrollbar (inner lists keep theirs). */
+  html {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--theme, #E2631E), var(--theme-dark, #7A3609));
+    border-radius: 999px;
+    border: 2px solid transparent;
   }
 
   ::selection {
@@ -100,7 +160,7 @@
   }
 
   .text-gradient {
-    background: linear-gradient(120deg, #ffffff 0%, #b6f0dc 45%, var(--theme-light) 100%);
+    background: linear-gradient(120deg, var(--g1, #ffffff) 0%, var(--g2, #ffc9a0) 45%, var(--g3, var(--theme-light, #FA803D)) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -123,28 +183,35 @@
     -webkit-user-select: none;
   }
 
+  /* Theme-tinted scrollbar (colour supplied via --scr). */
+  .theme-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scr, rgba(255, 255, 255, 0.3)) transparent;
+  }
+  .theme-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .theme-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .theme-scroll::-webkit-scrollbar-thumb {
+    background: var(--scr, rgba(255, 255, 255, 0.3));
+    border-radius: 999px;
+  }
+
   .delay-100 { animation-delay: 0.1s; }
   .delay-200 { animation-delay: 0.2s; }
   .delay-300 { animation-delay: 0.3s; }
-  .delay-500 { animation-delay: 0.5s; }
-}
+  .delay-500 { animation-delay: 0.5s; }}
 
-/* Custom scrollbar for the page */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #070b09;
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--theme), var(--theme-dark));
-  border-radius: 999px;
-  border: 2px solid #070b09;
-  transition: --theme 0.6s ease, --theme-dark 0.6s ease;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(var(--theme-light), var(--theme));
-}
-::-webkit-scrollbar-thumb:active {
-  box-shadow: inset 0 0 0 100px rgba(0,0,0,0.5);
+/* Homepage text helpers — resolve to the active theme tokens */
+.text-home-head { color: var(--home-head); }
+.text-home-body { color: var(--home-body); }
+.text-home-mut { color: var(--home-mut); }
+
+/* During a theme switch, freeze element transitions so bg & text change together */
+.no-theme-anim, .no-theme-anim * {
+  transition: none !important;
+  animation: none !important;
 }

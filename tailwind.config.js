@@ -7,15 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand emerald, original ink-green kept for continuity
-        'ink-green': '#1A5F4A',
+        // Brand orange (#FA803D family) — the site theme accent
+        'ink-green': '#E2631E',
         brand: {
-          DEFAULT: '#1A5F4A',
-          light: '#2dd4a7',
-          glow: '#34d399',
-          dark: '#0f3d2f',
+          DEFAULT: '#E2631E',
+          light: '#FA803D',
+          glow: '#FFA45E',
+          dark: '#7A3609',
         },
-        // Immersive near-black canvas with a faint green cast
+        // Immersive near-black canvas
         ink: {
           950: '#070b09',
           900: '#0a0f0d',

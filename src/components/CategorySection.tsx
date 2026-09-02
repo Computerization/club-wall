@@ -1,14 +1,10 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Club } from '../data/clubs';
 import { getCategoryMeta } from '../data/categoryMeta';
+import { darken, useLightScheme } from '../lib/theme';
 import ClubLogoItem from './ClubLogoItem';
 
 // ============== Tuning constants ==============
-// Desktop logo tiles are square; on narrow phones we use a slightly smaller
-// square so more than one is visible at a time in the marquee. `gap` is the
-// spacing between the logo edge and the divider line (each side), so the
-// full gap between two logos is 2 * gap + divider width.
 const CARD_WIDTH = 210;
 const CARD_HEIGHT = 260;
 const MOBILE_CARD_WIDTH = 160;
@@ -16,11 +12,19 @@ const MOBILE_CARD_HEIGHT = 200;
 const LOGO_GAP = 21;
 const MOBILE_LOGO_GAP = 17;
 const MOBILE_BREAKPOINT = '(max-width: 639px)';
-const SCROLL_MULTIPLIER = 1.5;
 const MOVE_THRESHOLD = 5;
 const SET_COUNT = 3;
-const AUTO_SCROLL_PIXELS_PER_FRAME = 0.55;
-const RESUME_DELAY_MS = 5000;
+
+/** Cruise (auto-scroll) speed, px/s. */
+const NORMAL_PX_S = 33;
+/** Exponential friction rate (higher = settles faster), mirroring the hero drag. */
+const FRICTION = 2;
+/** A release slower than this is treated as "let go while still". */
+const ZERO_SPEED_PX_S = 25;
+/** Cap on the thrown velocity, px/s. */
+const MAX_THROW_PX_S = 900;
+/** Pause before ramping back up after a zero-speed release. */
+const RESUME_DELAY_MS = 1500;
 
 interface CategorySectionProps {
   category: string;
@@ -35,32 +39,35 @@ interface CategorySectionProps {
 
 export default function CategorySection({ category, clubs, onClubClick, rowIndex = 0, disableAutoScroll = false, tiled = false }: CategorySectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // Card dimensions drive both the rendered tile size and the seamless-loop
-  // math, so they're a single reactive source shrunk on narrow phones.
   const [card, setCard] = useState({ w: CARD_WIDTH, h: CARD_HEIGHT, gap: LOGO_GAP });
   const [isDragging, setIsDragging] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeftState, setScrollLeftState] = useState(0);
-  const autoScrollEnabled = useRef(true);
-  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const touchStartX = useRef(0);
-  const touchMoved = useRef(false);
 
   const meta = getCategoryMeta(category);
+  const lightScheme = useLightScheme();
+  // Category accents read better when pushed deeper & bolder on light pages.
+  const accentColor = lightScheme ? darken(meta.accent, 0.35) : meta.accent;
 
-  // Direction: even rows scroll right-to-left (-1), odd rows left-to-right (1).
-  const direction = useMemo(() => rowIndex % 2 === 0 ? -1 : 1, [rowIndex]);
+  // Base marquee direction: even rows cruise (-1), odd rows (+).
+  const direction = useMemo(() => (rowIndex % 2 === 0 ? -1 : 1), [rowIndex]);
 
-  // A marquee cell is logo + spacing on both sides; all loop math is based on
-  // this full cell width so the seam stays pixel-perfect.
   const cellWidth = card.w + card.gap * 2;
-
   const setWidth = useMemo(() => clubs.length * cellWidth, [clubs, cellWidth]);
   const middleStart = setWidth;
   const middleEnd = 2 * setWidth;
 
-  // Swap to the compact square card on narrow viewports.
+  // ---------- motion state (refs so rAF + native listeners always see latest) ----------
+  const enabledRef = useRef(true);          // motion engine on/off
+  const pressedRef = useRef(false);         // pointer held down
+  const dirRef = useRef(direction);         // cruise direction (±1)
+  const velRef = useRef(direction * NORMAL_PX_S); // signed velocity, px/s
+  const lastTsRef = useRef(0);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const anchorXRef = useRef(0);
+  const anchorScrollRef = useRef(0);
+  const samplesRef = useRef<{ t: number; left: number }[]>([]);
+
+  // Swap to the compact card on narrow viewports.
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_BREAKPOINT);
     const apply = () =>
@@ -72,133 +79,181 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
     return () => mq.removeEventListener('change', apply);
   }, []);
 
-  // When auto-scroll is disabled, keep it permanently off.
+  // Static rows never move.
   useEffect(() => {
-    if (disableAutoScroll) {
-      autoScrollEnabled.current = false;
-    }
+    if (disableAutoScroll) enabledRef.current = false;
   }, [disableAutoScroll]);
 
-  // Initialize the scroll position + run the auto-scroll animation (unless disabled).
-  useEffect(() => {
-    if (clubs.length === 0 || disableAutoScroll || tiled) return;
-
-    if (containerRef.current) {
-      containerRef.current.scrollLeft = middleStart;
-    }
-
-    let rafId: number;
-    const animate = () => {
-      if (containerRef.current && autoScrollEnabled.current) {
-        const el = containerRef.current;
-        let newPos = el.scrollLeft + direction * AUTO_SCROLL_PIXELS_PER_FRAME;
-        const maxScroll = el.scrollWidth - el.clientWidth;
-
-        if (direction > 0 && newPos >= middleEnd) {
-          newPos -= setWidth;
-        } else if (direction < 0 && newPos < middleStart) {
-          newPos += setWidth;
-        }
-
-        newPos = Math.max(0, Math.min(newPos, maxScroll));
-        el.scrollLeft = newPos;
-      }
-      rafId = requestAnimationFrame(animate);
-    };
-
-    rafId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafId);
-  }, [direction, clubs.length, middleStart, setWidth, middleEnd, disableAutoScroll, tiled]);
-
-  // Snap back across the seam when the user scrolls past a copy boundary.
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || clubs.length === 0 || autoScrollEnabled.current) return;
-
-    const cur = containerRef.current.scrollLeft;
-    if (cur >= middleEnd) {
-      containerRef.current.scrollLeft = cur - setWidth;
-    } else if (cur < middleStart) {
-      containerRef.current.scrollLeft = cur + setWidth;
-    }
-  }, [setWidth, middleStart, middleEnd, clubs.length]);
-
-  // Mobile: pause on touch, then resume after a delay.
-  const clearResumeTimer = useCallback(() => {
+  const clearResumeTimer = () => {
     if (resumeTimerRef.current) {
       clearTimeout(resumeTimerRef.current);
       resumeTimerRef.current = null;
     }
-  }, []);
+  };
 
-  const startResumeTimer = useCallback(() => {
-    if (disableAutoScroll) return;
-    clearResumeTimer();
-    resumeTimerRef.current = setTimeout(() => {
-      autoScrollEnabled.current = true;
-    }, RESUME_DELAY_MS);
-  }, [clearResumeTimer, disableAutoScroll]);
+  // ---------- motion engine: auto-cruise + throw glide ----------
+  // velocity eases exponentially toward the cruise speed (target) — friction
+  // when faster, ramp-up when slower — in the current direction.
+  useEffect(() => {
+    if (clubs.length === 0 || disableAutoScroll || tiled) return;
+    const el = containerRef.current;
+    if (!el) return;
+    el.scrollLeft = middleStart;
+    lastTsRef.current = 0;
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchMoved.current = false;
-    autoScrollEnabled.current = false;
-    clearResumeTimer();
-  }, [clearResumeTimer]);
+    let rafId = 0;
+    const tick = (ts: number) => {
+      rafId = requestAnimationFrame(tick);
+      const now = containerRef.current;
+      if (!now) return;
+      if (pressedRef.current || !enabledRef.current) {
+        lastTsRef.current = ts;
+        return;
+      }
+      if (!lastTsRef.current) {
+        lastTsRef.current = ts;
+        return;
+      }
+      const dt = Math.min(0.05, (ts - lastTsRef.current) / 1000);
+      lastTsRef.current = ts;
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
-    if (dx > MOVE_THRESHOLD) {
-      touchMoved.current = true;
+      const target = dirRef.current * NORMAL_PX_S;
+      const k = Math.exp(-FRICTION * dt);
+      const v = target + (velRef.current - target) * k;
+      velRef.current = v;
+
+      let pos = now.scrollLeft + v * dt;
+      while (pos >= middleEnd) pos -= setWidth;
+      while (pos < middleStart) pos += setWidth;
+      pos = Math.max(0, Math.min(pos, now.scrollWidth - now.clientWidth));
+      now.scrollLeft = pos;
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [clubs.length, middleStart, middleEnd, setWidth, disableAutoScroll, tiled]);
+
+  // ---------- pointer drag (mirrors the hero title drag) ----------
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || disableAutoScroll || tiled) return;
+
+    function throwVelocity(samples: { t: number; left: number }[]) {
+      const n = samples.length;
+      if (n < 2) return 0;
+      const last = samples[n - 1];
+      let prev = samples[n - 2];
+      for (let i = n - 2; i >= 0; i--) {
+        if (last.t - samples[i].t >= 80) {
+          prev = samples[i];
+          break;
+        }
+      }
+      const dt = (last.t - prev.t) / 1000;
+      if (dt <= 0) return 0;
+      let v = (last.left - prev.left) / dt;
+      if (Math.abs(v) > MAX_THROW_PX_S) v = Math.sign(v) * MAX_THROW_PX_S;
+      return v;
     }
-  }, []);
 
-  const handleTouchEnd = useCallback(() => {
-    if (disableAutoScroll) return;
-    if (!touchMoved.current) {
-      autoScrollEnabled.current = true;
-    } else {
-      startResumeTimer();
-    }
-  }, [startResumeTimer, disableAutoScroll]);
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      clearResumeTimer();
+      enabledRef.current = false;
+      pressedRef.current = true;
+      setIsDragging(true);
+      setHasMoved(false);
+      anchorXRef.current = e.clientX;
+      anchorScrollRef.current = el.scrollLeft;
+      samplesRef.current = [{ t: Date.now(), left: el.scrollLeft }];
 
-  const handleTouchCancel = useCallback(() => {
-    clearResumeTimer();
-    if (!disableAutoScroll) autoScrollEnabled.current = true;
-  }, [clearResumeTimer, disableAutoScroll]);
+      const onMove = (ev: PointerEvent) => {
+        if (!pressedRef.current) return;
+        const dx = ev.clientX - anchorXRef.current;
+        if (Math.abs(dx) > MOVE_THRESHOLD) setHasMoved(true);
+        const now = containerRef.current;
+        if (now) now.scrollLeft = anchorScrollRef.current - dx;
 
-  // Click-and-drag scrolling.
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    setIsDragging(true);
-    setHasMoved(false);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeftState(containerRef.current.scrollLeft);
-  }, []);
+        const t = Date.now();
+        const s = samplesRef.current;
+        s.push({ t, left: now ? now.scrollLeft : anchorScrollRef.current - dx });
+        if (s.length > 12) s.shift();
+      };
 
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+      const onUp = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        if (!pressedRef.current) return;
+        pressedRef.current = false;
+        setIsDragging(false);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging || !containerRef.current) return;
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * SCROLL_MULTIPLIER;
-    if (Math.abs(walk) > MOVE_THRESHOLD) {
-      setHasMoved(true);
-    }
-    containerRef.current.scrollLeft = scrollLeftState - walk;
-  }, [isDragging, startX, scrollLeftState]);
+        const v = throwVelocity(samplesRef.current);
+        samplesRef.current = [];
+        if (Math.abs(v) < ZERO_SPEED_PX_S) {
+          // released at rest: wait, then cruise up in the original direction
+          dirRef.current = direction;
+          velRef.current = 0;
+          enabledRef.current = false;
+          resumeTimerRef.current = setTimeout(() => {
+            enabledRef.current = true;
+          }, RESUME_DELAY_MS);
+        } else {
+          // throw: glide in the release direction, easing down to cruise speed
+          dirRef.current = v > 0 ? 1 : -1;
+          velRef.current = v;
+          enabledRef.current = true;
+        }
+      };
 
-  const handleCardClick = useCallback((clubId: string) => {
-    if (hasMoved || touchMoved.current) return;
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    };
+
+    el.addEventListener('pointerdown', onDown);
+    return () => {
+      el.removeEventListener('pointerdown', onDown);
+    };
+  }, [clubs.length, disableAutoScroll, tiled, direction, middleStart, middleEnd, setWidth]);
+
+  // ---------- touch: pause auto-scroll while swiping natively ----------
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || disableAutoScroll || tiled) return;
+    const onTouchStart = () => {
+      clearResumeTimer();
+      enabledRef.current = false;
+      velRef.current = 0;
+    };
+    const onTouchEnd = () => {
+      dirRef.current = direction;
+      velRef.current = 0;
+      enabledRef.current = false;
+      resumeTimerRef.current = setTimeout(() => {
+        enabledRef.current = true;
+      }, RESUME_DELAY_MS);
+    };
+    const onTouchCancel = () => {
+      clearResumeTimer();
+      dirRef.current = direction;
+      velRef.current = 0;
+      enabledRef.current = true;
+    };
+    el.addEventListener('touchstart', onTouchStart);
+    el.addEventListener('touchend', onTouchEnd);
+    el.addEventListener('touchcancel', onTouchCancel);
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchend', onTouchEnd);
+      el.removeEventListener('touchcancel', onTouchCancel);
+    };
+  }, [disableAutoScroll, tiled, direction]);
+
+  const handleCardClick = (clubId: string) => {
+    if (hasMoved) return;
     onClubClick(clubId);
-  }, [hasMoved, onClubClick]);
-
-  const scrollByOne = useCallback((dir: 'left' | 'right') => {
-    if (!containerRef.current) return;
-    const amount = dir === 'left' ? -cellWidth : cellWidth;
-    containerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-  }, [cellWidth]);
+  };
 
   const displayClubs = useMemo(() => {
     if (clubs.length === 0) return [];
@@ -209,17 +264,17 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   if (clubs.length === 0) return null;
 
   return (
-    <section id={`cat-${category}`} className="group relative scroll-mt-20 py-10">
+    <section id={`cat-${category}`} className="group relative scroll-mt-20 py-6">
       {/* Section header */}
       <div className="mx-auto mb-5 flex max-w-7xl items-end justify-between px-6">
         <div>
-          <span className="eyebrow text-[11px] font-semibold" style={{ color: meta.accent }}>
-            {meta.cn} · {String(clubs.length).padStart(2, '0')}
-          </span>
-          <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
-            {meta.en}
+          <h2 className="mt-1 font-display text-3xl font-bold text-home-head sm:text-4xl">
+            <span className="font-extrabold" style={{ color: accentColor }}>{meta.cn}</span> {meta.en}
+            <span className="ml-3 align-middle text-2xl font-medium text-home-mut sm:text-3xl">
+              × {clubs.length}
+            </span>
           </h2>
-          <p className="mt-1 text-sm text-white/45">{meta.tagline}</p>
+          <p className="mt-1 text-sm text-home-mut">{meta.tagline}</p>
         </div>
         <span
           className="hidden h-12 w-1 rounded-full sm:block"
@@ -230,10 +285,10 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
       {/* Tiled grid: logos wrap and stack downward, no scrolling. */}
       {tiled ? (
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-3 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-6">
             {clubs.map((club) => (
               <div key={club.id} className="aspect-square">
-                <ClubLogoItem club={club} onClick={onClubClick} />
+                <ClubLogoItem club={club} onClick={onClubClick} gallery />
               </div>
             ))}
           </div>
@@ -241,16 +296,6 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
       ) : (
       /* Marquee */
       <div className="relative">
-        <button
-          onClick={() => scrollByOne('left')}
-          className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-100 shadow-lg transition-[transform,opacity] duration-300
-                     hover:scale-110 active:brightness-50"
-          aria-label="向左滑动"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-
         <div
           ref={containerRef}
           className="marquee-mask scrollbar-hide select-none overflow-x-auto px-6"
@@ -260,20 +305,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
             scrollbarWidth: 'none',
             touchAction: 'pan-x',
           }}
-          onScroll={handleScroll}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchCancel}
         >
-          {/* Auto-scroll rows triplicate into a w-max loop; the static rows keep a
-              single horizontal strip (w-max) that mx-auto centers when it's
-              narrower than the viewport and lets scroll/swipe when it isn't —
-              never wrapping into a vertical stack on phones. Each cell is the
-              logo spaced by `gap` on both sides. */}
           <div className={`flex items-center py-6 w-max ${disableAutoScroll ? 'mx-auto' : ''}`}>
             {displayClubs.map((club, index) => (
               <div
@@ -286,16 +318,6 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
             ))}
           </div>
         </div>
-
-        <button
-          onClick={() => scrollByOne('right')}
-          className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-100 shadow-lg transition-[transform,opacity] duration-300
-                     hover:scale-110 active:brightness-50"
-          aria-label="向右滑动"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
       </div>
       )}
     </section>
