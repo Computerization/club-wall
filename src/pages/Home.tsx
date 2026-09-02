@@ -41,17 +41,15 @@ export default function Home() {
   const evadeRef = useRef<HTMLButtonElement>(null);
   const [evadePos, setEvadePos] = useState({ x: 0, y: 0 });
 
-  // Light/dark: default to the system/browser preference, manually togglable.
+  // Theme is matched to the browser/system scheme on every load; the manual
+  // toggle only affects the current session (dark if the browser has no mode).
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    try {
-      const saved = localStorage.getItem('cw-theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-    } catch { /* ignore */ }
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+    return 'dark';
   });
 
-  // Apply before first paint. Only a manual toggle is persisted, so a fresh
-  // load (no stored choice) always follows the system/browser preference.
+  // Apply before first paint.
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
@@ -61,13 +59,7 @@ export default function Home() {
     const el = document.documentElement;
     el.classList.add('no-theme-anim');
     window.setTimeout(() => el.classList.remove('no-theme-anim'), 700);
-    setTheme((t) => {
-      const next = t === 'dark' ? 'light' : 'dark';
-      try {
-        localStorage.setItem('cw-theme', next);
-      } catch { /* ignore */ }
-      return next;
-    });
+    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
   };
 
   // Reveal the floating corner controls after passing the hero.

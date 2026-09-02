@@ -8,13 +8,13 @@
     <meta name="description" content="WFLA Club Wall — 寻找属于你的社团。Discover, preview, and join the community that's right for you." />
     <title>Club Wall · 世外社团招新</title>
     <script>
-      // Resolve the theme before first paint to avoid a flash of the wrong mode.
+      // On every load, match the browser/system colour scheme (dark if the
+      // browser exposes no preference) before first paint.
       (function () {
         try {
-          var t = localStorage.getItem('cw-theme');
-          if (t !== 'light' && t !== 'dark') {
-            t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-          }
+          var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var light = window.matchMedia('(prefers-color-scheme: light)').matches;
+          var t = dark ? 'dark' : light ? 'light' : 'dark';
           var r = document.documentElement;
           r.dataset.theme = t;
           r.style.colorScheme = t;

@@ -50,9 +50,10 @@ interface ClubPreviewModalProps {
   onOpenFull: (id: string) => void;
 }
 
-/** Measures the club logo's natural pixel dimensions (png, then jpg). */
-function useLogoSize(club: Club | null): { w: number; h: number } | null {
-  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+/** Measures the club logo's natural pixel dimensions and whether it has any
+ *  transparent pixels (png, then jpg). */
+function useLogoSize(club: Club | null): { w: number; h: number; alpha: boolean } | null {
+  const [size, setSize] = useState<{ w: number; h: number; alpha: boolean } | null>(null);
   const checkedId = useRef<string | null>(null);
 
   useEffect(() => {
@@ -74,7 +75,30 @@ function useLogoSize(club: Club | null): { w: number; h: number } | null {
       img.onload = () => {
         const w = img.naturalWidth;
         const h = img.naturalHeight;
-        if (w && h) setSize({ w, h });
+        if (w && h) {
+          let alpha = false;
+          try {
+            const maxSide = 96;
+            const scale = Math.min(1, maxSide / Math.max(w, h));
+            const cw = Math.max(1, Math.round(w * scale));
+            const ch = Math.max(1, Math.round(h * scale));
+            const canvas = document.createElement('canvas');
+            canvas.width = cw;
+            canvas.height = ch;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, cw, ch);
+              const data = ctx.getImageData(0, 0, cw, ch).data;
+              for (let p = 3; p < data.length; p += 4) {
+                if (data[p] < 255) {
+                  alpha = true;
+                  break;
+                }
+              }
+            }
+          } catch { /* treat as opaque */ }
+          setSize({ w, h, alpha });
+        }
       };
       img.onerror = () => {
         i += 1;
@@ -224,6 +248,10 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
   const twoColumnWidth = 480 * wideRatio + SIDEBAR_COST;
   const showBanner =
     wideRatio >= BANNER_RATIO || (wideRatio > 0 && viewport >= MD_BREAKPOINT && twoColumnWidth > viewport);
+  // In the side-by-side layout only: transparent logos are not stretched to the
+  // full visual-side height and keep breathing room instead of touching edges.
+  // 汽车社 (id 24) is excluded and keeps its full-bleed look.
+  const hasTransparency = !!logo?.alpha && !showBanner && club.id !== '24';
 
   const btnTextColor = onColor(main);
   // A club whose theme is dark needs white text on its CTA → give it a light,
@@ -434,6 +462,13 @@ export default function ClubPreviewModal({ club, onClose, onOpenFull }: ClubPrev
   const logoPanel = showBanner ? (
     <div ref={logoBoxRef} className="relative flex w-full shrink-0 items-start justify-center overflow-hidden bg-black/30">
       <ClubCover club={club} className="block h-auto w-full max-h-[44vh] object-cover object-top" />
+    </div>
+  ) : hasTransparency ? (
+    <div ref={logoBoxRef} className="relative flex shrink-0 items-center justify-center p-8 sm:p-10">
+      <ClubCover
+        club={club}
+        className="block max-h-[46vh] w-auto h-auto max-w-full object-contain md:max-h-[360px]"
+      />
     </div>
   ) : (
     <div ref={logoBoxRef} className="relative flex shrink-0 items-center justify-center overflow-hidden">

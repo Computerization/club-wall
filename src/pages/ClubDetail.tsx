@@ -130,8 +130,10 @@ export default function ClubDetail() {
           <BackButton onClick={handleBack} accent={main} />
           {club ? (
             <div className="pb-10">
-              {/* Name + logo on one row; About flows directly under the name */}
-              <div className="grid items-start gap-x-8 md:grid-cols-3">
+              {/* Two columns: left = name → About → poster (poster keeps its own
+                  spacing under the tags); right = logo, then the info box below
+                  it (if the logo is long the info box simply sits lower). */}
+              <div className="grid items-start gap-x-8 gap-y-10 md:grid-cols-3">
                 <div className="md:col-span-2">
                   <div className="flex flex-wrap items-center gap-x-4">
                     <h1
@@ -171,26 +173,17 @@ export default function ClubDetail() {
                       ))}
                     </div>
                   )}
-                </div>
 
-                <div className="flex flex-col items-center">
-                  <ClubLogo club={club} className="mx-auto max-h-24 w-auto max-w-full object-contain" />
-                  <p className="mt-2 text-xs" style={{ color: faintCol }}>
-                    {club.name} logo
-                  </p>
-                </div>
-              </div>
-
-              {/* Poster label above both columns so the poster image's top edge
-                  lines up with the top of the info box */}
-              <div className="mt-8">
-                <h3 className="mb-4 text-sm font-semibold" style={{ color: main }}>
-                  <Bilingual cn="招新海报" en="Poster" />
-                </h3>
-                <div className="grid items-start gap-x-8 gap-y-8 md:grid-cols-3">
-                  <div className="md:col-span-2">
+                  <div className="mt-8">
+                    <h3 className="mb-4 text-sm font-semibold" style={{ color: main }}>
+                      <Bilingual cn="招新海报" en="Poster" />
+                    </h3>
                     <ClubPoster club={club} className={lightSkin ? 'w-full rounded-xl' : undefined} />
                   </div>
+                </div>
+
+                <div className="flex w-full flex-col items-center gap-8">
+                  <ClubLogo club={club} className="h-auto w-full max-w-full object-contain" />
 
                   <aside
                     className="w-full rounded-xl px-4 py-4"
@@ -296,7 +289,7 @@ export default function ClubDetail() {
                     )}
                   </dl>
                   <ClubCpQrcodeSection club={club} />
-                </aside>
+                  </aside>
                 </div>
               </div>
             </div>
