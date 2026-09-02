@@ -6,13 +6,16 @@ import ClubLogoItem from './ClubLogoItem';
 
 // ============== Tuning constants ==============
 // Desktop logo tiles are square; on narrow phones we use a slightly smaller
-// square so more than one is visible at a time in the marquee.
-const CARD_WIDTH = 340;
-const CARD_HEIGHT = 340;
-const MOBILE_CARD_WIDTH = 220;
-const MOBILE_CARD_HEIGHT = 220;
+// square so more than one is visible at a time in the marquee. `gap` is the
+// spacing between the logo edge and the divider line (each side), so the
+// full gap between two logos is 2 * gap + divider width.
+const CARD_WIDTH = 210;
+const CARD_HEIGHT = 260;
+const MOBILE_CARD_WIDTH = 160;
+const MOBILE_CARD_HEIGHT = 200;
+const LOGO_GAP = 21;
+const MOBILE_LOGO_GAP = 17;
 const MOBILE_BREAKPOINT = '(max-width: 639px)';
-const CARD_GAP = 20;
 const SCROLL_MULTIPLIER = 1.5;
 const MOVE_THRESHOLD = 5;
 const SET_COUNT = 3;
@@ -34,13 +37,12 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   const containerRef = useRef<HTMLDivElement>(null);
   // Card dimensions drive both the rendered tile size and the seamless-loop
   // math, so they're a single reactive source shrunk on narrow phones.
-  const [card, setCard] = useState({ w: CARD_WIDTH, h: CARD_HEIGHT });
+  const [card, setCard] = useState({ w: CARD_WIDTH, h: CARD_HEIGHT, gap: LOGO_GAP });
   const [isDragging, setIsDragging] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeftState, setScrollLeftState] = useState(0);
   const autoScrollEnabled = useRef(true);
-  const isMobile = useRef(false);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
   const touchMoved = useRef(false);
@@ -50,22 +52,21 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
   // Direction: even rows scroll right-to-left (-1), odd rows left-to-right (1).
   const direction = useMemo(() => rowIndex % 2 === 0 ? -1 : 1, [rowIndex]);
 
-  const setWidth = useMemo(() => clubs.length * card.w + (clubs.length - 1) * CARD_GAP, [clubs, card.w]);
+  // A marquee cell is logo + spacing on both sides; all loop math is based on
+  // this full cell width so the seam stays pixel-perfect.
+  const cellWidth = card.w + card.gap * 2;
+
+  const setWidth = useMemo(() => clubs.length * cellWidth, [clubs, cellWidth]);
   const middleStart = setWidth;
   const middleEnd = 2 * setWidth;
 
-  // Detect touch / mobile devices.
-  useEffect(() => {
-    isMobile.current = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
-  }, []);
-
-  // Swap to the compact portrait card on narrow viewports.
+  // Swap to the compact square card on narrow viewports.
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_BREAKPOINT);
     const apply = () =>
       setCard(mq.matches
-        ? { w: MOBILE_CARD_WIDTH, h: MOBILE_CARD_HEIGHT }
-        : { w: CARD_WIDTH, h: CARD_HEIGHT });
+        ? { w: MOBILE_CARD_WIDTH, h: MOBILE_CARD_HEIGHT, gap: MOBILE_LOGO_GAP }
+        : { w: CARD_WIDTH, h: CARD_HEIGHT, gap: LOGO_GAP });
     apply();
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
@@ -120,20 +121,6 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
       containerRef.current.scrollLeft = cur + setWidth;
     }
   }, [setWidth, middleStart, middleEnd, clubs.length]);
-
-  // Desktop: pause auto-scroll on hover.
-  const handleMouseEnter = useCallback(() => {
-    if (!isMobile.current) {
-      autoScrollEnabled.current = false;
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsDragging(false);
-    if (!isMobile.current && !disableAutoScroll) {
-      autoScrollEnabled.current = true;
-    }
-  }, [disableAutoScroll]);
 
   // Mobile: pause on touch, then resume after a delay.
   const clearResumeTimer = useCallback(() => {
@@ -209,9 +196,9 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
   const scrollByOne = useCallback((dir: 'left' | 'right') => {
     if (!containerRef.current) return;
-    const amount = dir === 'left' ? -(card.w + CARD_GAP) : (card.w + CARD_GAP);
+    const amount = dir === 'left' ? -cellWidth : cellWidth;
     containerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-  }, [card.w]);
+  }, [cellWidth]);
 
   const displayClubs = useMemo(() => {
     if (clubs.length === 0) return [];
@@ -243,7 +230,7 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
       {/* Tiled grid: logos wrap and stack downward, no scrolling. */}
       {tiled ? (
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-4">
             {clubs.map((club) => (
               <div key={club.id} className="aspect-square">
                 <ClubLogoItem club={club} onClick={onClubClick} />
@@ -256,11 +243,9 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
       <div className="relative">
         <button
           onClick={() => scrollByOne('left')}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
-                     hover:scale-110 group-hover:opacity-100 active:brightness-50"
+                     rounded-full glass-strong text-white opacity-100 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 active:brightness-50"
           aria-label="向左滑动"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -276,8 +261,6 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
             touchAction: 'pan-x',
           }}
           onScroll={handleScroll}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
@@ -289,13 +272,14 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
           {/* Auto-scroll rows triplicate into a w-max loop; the static rows keep a
               single horizontal strip (w-max) that mx-auto centers when it's
               narrower than the viewport and lets scroll/swipe when it isn't —
-              never wrapping into a vertical stack on phones. */}
-          <div className={`flex gap-5 py-2 w-max ${disableAutoScroll ? 'mx-auto' : ''}`}>
+              never wrapping into a vertical stack on phones. Each cell is the
+              logo spaced by `gap` on both sides. */}
+          <div className={`flex items-center py-6 w-max ${disableAutoScroll ? 'mx-auto' : ''}`}>
             {displayClubs.map((club, index) => (
               <div
                 key={`${club.id}-${index}`}
-                style={{ width: card.w, height: card.h }}
                 className="shrink-0"
+                style={{ width: card.w, height: card.h, marginLeft: card.gap, marginRight: card.gap }}
               >
                 <ClubLogoItem club={club} onClick={handleCardClick} />
               </div>
@@ -305,11 +289,9 @@ export default function CategorySection({ category, clubs, onClubClick, rowIndex
 
         <button
           onClick={() => scrollByOne('right')}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center
-                     rounded-full glass-strong text-white opacity-0 shadow-lg transition-[transform,opacity] duration-300
-                     hover:scale-110 group-hover:opacity-100 active:brightness-50"
+                     rounded-full glass-strong text-white opacity-100 shadow-lg transition-[transform,opacity] duration-300
+                     hover:scale-110 active:brightness-50"
           aria-label="向右滑动"
         >
           <ChevronRight className="h-5 w-5" />
