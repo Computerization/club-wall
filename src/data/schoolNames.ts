@@ -17,7 +17,7 @@ export const schoolMap: Record<string, SchoolListing> = {
   '5':  { en: 'Economics Club', page: 5, row: 19 },
   '6':  { en: 'WFLA Mock Trial', page: 4, row: 10 },
   '7':  { en: 'Model UN Club', page: 6, row: 1 },
-  '8':  { en: 'TechMedia', page: 4, row: 12 },
+  '8':  { en: 'Techomedia', page: 4, row: 12 },
   '9':  { en: 'HIBIKI', page: 4, row: 3 },
   '10': { en: 'WFLA MathClub', page: 3, row: 3 },
   '11': { en: 'Origin', page: 4, row: 11 },
