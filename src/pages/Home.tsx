@@ -159,14 +159,28 @@ export default function Home() {
     return () => window.removeEventListener('mousemove', onMove);
   }, [eggActive]);
 
-  const filteredClubs = searchQuery
-    ? clubs.filter((club) =>
-        club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        club.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (getSchoolListing(club)?.en ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        club.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : clubs;
+  // Live search results: match against either the English school-site listing
+  // (en) or the Chinese club name (name). Sorted by the earliest match
+  // position across both fields so the most "front-loaded" hits rank higher.
+  // Clubs with no match in either field are dropped. Ties break by Chinese
+  // name alphabetical order.
+  const filteredClubs = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    if (!q) return clubs;
+    return clubs
+      .map((club) => {
+        const enIdx = (getSchoolListing(club)?.en ?? '').toLowerCase().indexOf(q);
+        const nameIdx = club.name.toLowerCase().indexOf(q);
+        const idx = [enIdx, nameIdx].filter((i) => i !== -1).reduce((min, i) => Math.min(min, i), Number.MAX_SAFE_INTEGER);
+        return { club, idx };
+      })
+      .filter(({ idx }) => idx !== Number.MAX_SAFE_INTEGER)
+      .sort((a, b) => {
+        if (a.idx !== b.idx) return a.idx - b.idx;
+        return a.club.name.localeCompare(b.club.name);
+      })
+      .map((m) => m.club);
+  }, [searchQuery]);
 
   const isSearching = searchQuery.length > 0;
   const isRatingActive = ratingFilter.size > 0;
